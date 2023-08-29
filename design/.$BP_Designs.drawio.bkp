@@ -1,5 +1,5 @@
-<mxfile host="Electron" modified="2023-08-28T06:21:11.626Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.6.8 Chrome/114.0.5735.289 Electron/25.5.0 Safari/537.36" etag="-0ZBchgKfCP15ff11w3q" version="21.6.8" type="device">
-  <diagram name="BPDesign" id="jdbMnuQPYJpSlZmubfTC">
+<mxfile host="Electron" modified="2023-08-28T06:34:17.231Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.6.8 Chrome/114.0.5735.289 Electron/25.5.0 Safari/537.36" etag="g0zTypQxcHS7JcFAd5Ys" version="21.6.8" type="device">
+  <diagram name="BP_UI" id="jdbMnuQPYJpSlZmubfTC">
     <mxGraphModel dx="864" dy="556" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
@@ -46,8 +46,8 @@
         <mxCell id="odYE0l-GBs4BgsAeKGHD-14" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="40" y="120" width="160" height="350" as="geometry" />
         </mxCell>
-        <mxCell id="odYE0l-GBs4BgsAeKGHD-15" value="&lt;h1&gt;Batch Processing Design&lt;/h1&gt;&lt;div&gt;&lt;b&gt;Functionality:&lt;/b&gt;&lt;/div&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="240" y="360" width="320" height="120" as="geometry" />
+        <mxCell id="odYE0l-GBs4BgsAeKGHD-15" value="&lt;h1&gt;Batch Processing Design&lt;/h1&gt;&lt;div&gt;&lt;b&gt;Functionality:&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;ol&gt;&lt;li&gt;Text field (user)&lt;/li&gt;&lt;li&gt;This have 2 numbers fields and 1 drop select (user)&lt;/li&gt;&lt;li&gt;This have the MET for the operation (program)&lt;/li&gt;&lt;li&gt;Unique ID for program (user or program)&lt;/li&gt;&lt;li&gt;Pause simulation (user)&lt;/li&gt;&lt;li&gt;Reset form (user)&lt;/li&gt;&lt;li&gt;Randomize/auto fill form (user)&lt;/li&gt;&lt;li&gt;Add process to a batch (user)&lt;/li&gt;&lt;li&gt;Time passed since program start (program)&lt;/li&gt;&lt;li&gt;Pending batch to process (program)&lt;/li&gt;&lt;li&gt;Button that opens the Batch on execution window (user)&lt;/li&gt;&lt;li&gt;Button that opens the Finished processes window (user)&lt;/li&gt;&lt;/ol&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="240" y="360" width="350" height="260" as="geometry" />
         </mxCell>
         <mxCell id="odYE0l-GBs4BgsAeKGHD-17" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;ID: P0001DSDAID&lt;br&gt;MET: 3s&lt;/font&gt;" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" vertex="1" parent="1">
           <mxGeometry x="40" y="280" width="160" height="80" as="geometry" />
@@ -135,6 +135,42 @@
         </mxCell>
         <mxCell id="odYE0l-GBs4BgsAeKGHD-59" value="&amp;nbsp;BP Actual Batch" style="rounded=0;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
           <mxGeometry x="40" y="100" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="odYE0l-GBs4BgsAeKGHD-61" value="(1)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#CC0000;" vertex="1" parent="1">
+          <mxGeometry x="230" y="140" width="25" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="odYE0l-GBs4BgsAeKGHD-62" value="(2)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#CC0000;" vertex="1" parent="1">
+          <mxGeometry x="230" y="170" width="25" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="odYE0l-GBs4BgsAeKGHD-63" value="(3)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#CC0000;" vertex="1" parent="1">
+          <mxGeometry x="230" y="195" width="25" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="odYE0l-GBs4BgsAeKGHD-64" value="(4)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#CC0000;" vertex="1" parent="1">
+          <mxGeometry x="230" y="230" width="25" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="odYE0l-GBs4BgsAeKGHD-65" value="(9)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#CC0000;" vertex="1" parent="1">
+          <mxGeometry x="550" y="145" width="25" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="odYE0l-GBs4BgsAeKGHD-66" value="(10)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#CC0000;" vertex="1" parent="1">
+          <mxGeometry x="540" y="175" width="25" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="odYE0l-GBs4BgsAeKGHD-67" value="(11)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#CC0000;" vertex="1" parent="1">
+          <mxGeometry x="535" y="210" width="25" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="odYE0l-GBs4BgsAeKGHD-68" value="(5)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#CC0000;" vertex="1" parent="1">
+          <mxGeometry x="277.5" y="290" width="25" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="odYE0l-GBs4BgsAeKGHD-69" value="(6)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#CC0000;" vertex="1" parent="1">
+          <mxGeometry x="327.5" y="290" width="25" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="odYE0l-GBs4BgsAeKGHD-70" value="(7)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#CC0000;" vertex="1" parent="1">
+          <mxGeometry x="375" y="290" width="25" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="odYE0l-GBs4BgsAeKGHD-71" value="(8)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#CC0000;" vertex="1" parent="1">
+          <mxGeometry x="440" y="290" width="25" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="odYE0l-GBs4BgsAeKGHD-72" value="(12)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#CC0000;" vertex="1" parent="1">
+          <mxGeometry x="535" y="250" width="25" height="20" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
