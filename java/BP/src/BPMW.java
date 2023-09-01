@@ -110,7 +110,7 @@ public class BPMW extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(this.bpMode.isShowing()){
             // Cannot open another instance for this window
-            JOptionPane.showMessageDialog(null, "Error");
+            JOptionPane.showMessageDialog(null, "Batch Preparation Mode window is already active!");
         }else {
             this.bpMode.setVisible(true);
         }

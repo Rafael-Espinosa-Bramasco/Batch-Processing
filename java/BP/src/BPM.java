@@ -2,7 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
+import java.awt.Font;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import libs.TextPrompt;
+import libs.Process;
 /**
  *
  * @author rafael
@@ -14,8 +18,46 @@ public class BPM extends javax.swing.JFrame {
      */
     public BPM() {
         initComponents();
+        
+        TextPrompt PNPH = new TextPrompt("Your Name",this.PNField);
+        TextPrompt OP1PH = new TextPrompt("X",this.OPN1Field);
+        TextPrompt OP2PH = new TextPrompt("Y",this.OPN2Field);
+        TextPrompt METPH = new TextPrompt("MET in seconds",this.METField);
+        TextPrompt PIDPH = new TextPrompt("Program ID",this.PIDField);
+        
+        PNPH.changeAlpha(0.75f);
+        PNPH.changeStyle(Font.ITALIC);
+        OP1PH.changeAlpha(0.75f);
+        OP1PH.changeStyle(Font.ITALIC);
+        OP2PH.changeAlpha(0.75f);
+        OP2PH.changeStyle(Font.ITALIC);
+        METPH.changeAlpha(0.75f);
+        METPH.changeStyle(Font.ITALIC);
+        PIDPH.changeAlpha(0.75f);
+        PIDPH.changeStyle(Font.ITALIC);
+        
+        this.METField.setEnabled(false);
+        
+        this.updatePID();
+        
+        this.setMET();
+        
+        this.ProcessCount = 0;
+        
+        this.BatchsNeeded = 0;
+        
+        this.initRandomValues();
     }
-
+    
+    // Variables
+    int PAG_ID = 0;                // ID generator
+    ArrayList<Process> IDs = new ArrayList();    // ID's array
+    int ProcessCount;
+    int BatchsNeeded;
+    
+    // To randomize
+    ArrayList<String> Names = new ArrayList();
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -25,25 +67,417 @@ public class BPM extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        BPMPanel = new javax.swing.JPanel();
+        METLabel = new javax.swing.JLabel();
+        PNLabel = new javax.swing.JLabel();
+        OPLabel = new javax.swing.JLabel();
+        PIDLabel = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        METField = new javax.swing.JTextField();
+        PNField = new javax.swing.JTextField();
+        PIDField = new javax.swing.JTextField();
+        ResetFields = new javax.swing.JButton();
+        RandomizeData = new javax.swing.JButton();
+        AddProcess = new javax.swing.JButton();
+        OPN2Field = new javax.swing.JTextField();
+        OPN1Field = new javax.swing.JTextField();
+        OPOption = new javax.swing.JComboBox<>();
+        PALabel = new javax.swing.JLabel();
+        BNLabel = new javax.swing.JLabel();
+        PANumber = new javax.swing.JLabel();
+        BNNumber = new javax.swing.JLabel();
+        StartSimulation = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Batch Processing - MT Panel");
-        setPreferredSize(new java.awt.Dimension(600, 300));
         setResizable(false);
+
+        BPMPanel.setBackground(new java.awt.Color(255, 255, 255));
+        BPMPanel.setPreferredSize(new java.awt.Dimension(600, 210));
+
+        METLabel.setText("Maximum Estimated Time");
+
+        PNLabel.setText("Program Name");
+
+        OPLabel.setText("Operation");
+
+        PIDLabel.setText("Program ID");
+
+        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
+
+        METField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        PNField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        PNField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                PNFieldKeyTyped(evt);
+            }
+        });
+
+        PIDField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        ResetFields.setText("Reset");
+        ResetFields.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ResetFieldsActionPerformed(evt);
+            }
+        });
+
+        RandomizeData.setText("Random");
+        RandomizeData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RandomizeDataActionPerformed(evt);
+            }
+        });
+
+        AddProcess.setText("Add");
+        AddProcess.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AddProcessActionPerformed(evt);
+            }
+        });
+
+        OPN2Field.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        OPN2Field.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                OPN2FieldKeyTyped(evt);
+            }
+        });
+
+        OPN1Field.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        OPN1Field.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                OPN1FieldKeyTyped(evt);
+            }
+        });
+
+        OPOption.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "+", "-", "x", "/", "%", "POW" }));
+        OPOption.setSelectedItem("+");
+        OPOption.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                OPOptionItemStateChanged(evt);
+            }
+        });
+
+        PALabel.setText("Processes Added");
+
+        BNLabel.setText("Batch's Needed");
+
+        PANumber.setText("0");
+
+        BNNumber.setText("0");
+
+        StartSimulation.setText("Start Simulation");
+
+        javax.swing.GroupLayout BPMPanelLayout = new javax.swing.GroupLayout(BPMPanel);
+        BPMPanel.setLayout(BPMPanelLayout);
+        BPMPanelLayout.setHorizontalGroup(
+            BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BPMPanelLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(BPMPanelLayout.createSequentialGroup()
+                        .addComponent(PNLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(PNField, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(BPMPanelLayout.createSequentialGroup()
+                        .addComponent(PIDLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(PIDField, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(BPMPanelLayout.createSequentialGroup()
+                        .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(METLabel)
+                            .addComponent(OPLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(BPMPanelLayout.createSequentialGroup()
+                                .addComponent(OPN1Field, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(OPOption, 0, 1, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(OPN2Field, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(METField, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(BPMPanelLayout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(ResetFields)
+                        .addGap(18, 18, 18)
+                        .addComponent(RandomizeData)
+                        .addGap(18, 18, 18)
+                        .addComponent(AddProcess)))
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(BPMPanelLayout.createSequentialGroup()
+                        .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(PALabel)
+                            .addComponent(BNLabel))
+                        .addGap(43, 43, 43)
+                        .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(BNNumber)
+                            .addComponent(PANumber))
+                        .addGap(0, 68, Short.MAX_VALUE))
+                    .addComponent(StartSimulation, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        BPMPanelLayout.setVerticalGroup(
+            BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BPMPanelLayout.createSequentialGroup()
+                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(BPMPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jSeparator1))
+                    .addGroup(BPMPanelLayout.createSequentialGroup()
+                        .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(BPMPanelLayout.createSequentialGroup()
+                                .addGap(17, 17, 17)
+                                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(PNLabel)
+                                    .addComponent(PNField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(8, 8, 8)
+                                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(OPLabel)
+                                    .addComponent(OPN2Field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(OPN1Field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(OPOption, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(8, 8, 8)
+                                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(METLabel)
+                                    .addComponent(METField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(8, 8, 8)
+                                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(PIDLabel)
+                                    .addComponent(PIDField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(31, 31, 31)
+                                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(ResetFields)
+                                    .addComponent(RandomizeData)
+                                    .addComponent(AddProcess)))
+                            .addGroup(BPMPanelLayout.createSequentialGroup()
+                                .addGap(19, 19, 19)
+                                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(PALabel)
+                                    .addComponent(PANumber))
+                                .addGap(18, 18, 18)
+                                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(BNLabel)
+                                    .addComponent(BNNumber))
+                                .addGap(37, 37, 37)
+                                .addComponent(StartSimulation, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(21, 21, 21)))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 600, Short.MAX_VALUE)
+            .addComponent(BPMPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(BPMPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    // My Functions
+    
+    private void initRandomValues(){
+        Names.add("Rafael Espinosa");
+        Names.add("Natalia Ruiz");
+        Names.add("Allan Rick");
+        Names.add("Jhon Wick");
+        Names.add("Amadeus Mozart");
+        Names.add("James Franco");
+        Names.add("Ted Bundy");
+        Names.add("Derniere Damnski");
+        Names.add("LeNuit Vlachno");
+        Names.add("Luis Santollo");
+        Names.add("Alejandra Bustamante");
+    }
+    
+    private boolean validateFields(){
+        // Check if there is an empty field
+        if(this.PNField.getText().compareTo("") == 0 || this.OPN1Field.getText().compareTo("") == 0 || this.OPN2Field.getText().compareTo("") == 0 || this.METField.getText().compareTo("") == 0 || this.PIDField.getText().compareTo("") == 0){
+            JOptionPane.showMessageDialog(null, "You must fill all the fields!");
+            return false;
+        }
+        // Validate operands for operation and MET
+        else if(Integer.parseInt(this.OPN2Field.getText()) == 0 && this.OPOption.getSelectedItem().toString().compareTo("/") == 0){
+            JOptionPane.showMessageDialog(null, "Second operand can't be zero for a division!");
+            return false;
+        }
+        else if(Integer.parseInt(this.METField.getText()) == 0){
+            JOptionPane.showMessageDialog(null, "MET can't be zero or less!");
+            return false;
+        }
+
+        return true;
+    }
+    
+    private void updatePID(){
+        this.PIDField.setText("P".concat(String.valueOf(this.PAG_ID)).concat("ID"));
+    }
+    
+    private boolean IDExists(String element){
+        int IDLength = this.IDs.size();
+        if(IDLength == 0){
+            return false;
+        }else{
+            for(int i = 0 ; i < IDLength ; i++){
+                if(this.IDs.get(i).getProgramID().compareTo(element) == 0){
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    
+    private void setMET(){
+        switch(this.OPOption.getSelectedItem().toString()){
+            case "+":
+                this.METField.setText("1");
+                break;
+            case "-":
+                this.METField.setText("1");
+                break;
+            case "x":
+                this.METField.setText("3");
+                break;
+            case "/":
+                this.METField.setText("3");
+                break;
+            case "%":
+                this.METField.setText("4");
+                break;
+            case "POW":
+                this.METField.setText("5");
+                break;
+        }
+    }
+    
+    private void resetAllFields(){
+        this.PNField.setText("");
+        this.OPN1Field.setText("");
+        this.OPN2Field.setText("");
+        this.updatePID();
+    }
+    
+    private void calculateB_P(){
+        this.PANumber.setText(String.valueOf(this.ProcessCount));
+        
+        this.BatchsNeeded = (int) java.lang.Math.ceil((double)this.ProcessCount / 4.0);
+        this.BNNumber.setText(String.valueOf(this.BatchsNeeded));
+    }
+    
+    private int validateNumType(String x){
+        if(x.matches("[0-9]+")){
+            return 1;
+        }
+        else if(x.matches("[0-9]+\\.?[0-9]+")){
+            return 2;
+        }
+        else {
+            return 0;
+        }
+    }
+    
+    private void randomize(){
+        int numero = (int)(Math.random()*10+1);
+        this.PNField.setText(this.Names.get((int)(Math.random()*11)));
+        this.OPN1Field.setText(String.valueOf((int)(Math.random()*1000)));
+        this.OPN2Field.setText(String.valueOf((int)(Math.random()*1000+1)));
+        
+        // Randomize operation
+        switch((int)(Math.random()*6+1)){
+            case 1:
+                this.OPOption.selectWithKeyChar('+');
+                break;
+            case 2:
+                this.OPOption.selectWithKeyChar('-');
+                break;
+            case 3:
+                this.OPOption.selectWithKeyChar('*');
+                break;
+            case 4:
+                this.OPOption.selectWithKeyChar('/');
+                break;
+            case 5:
+                this.OPOption.selectWithKeyChar('%');
+                break;
+            case 6:
+                this.OPOption.selectWithKeyChar('p');
+                break;
+        }
+        
+        this.setMET();
+    }
+    
+    //// Listeners
+    
+    private void AddProcessActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddProcessActionPerformed
+        // TODO add your handling code here:
+        if(this.validateFields()){
+            // Check the ID
+            if(this.IDExists(this.PIDField.getText())){
+                // ID exists
+                JOptionPane.showMessageDialog(null, "Program ID already exists!");
+            }
+            else {
+                // ID doesn't exists, ADD THE ELEMENT
+                Process NewProcess = new Process(this.PNField.getText(), this.OPN1Field.getText(), this.OPN1Field.getText(), this.OPOption.getSelectedItem().toString(), Integer.parseInt(this.METField.getText()), this.PIDField.getText());
+                this.IDs.add(NewProcess);
+                
+                this.PAG_ID++;
+                this.ProcessCount++;
+                
+                this.calculateB_P();
+                
+                this.resetAllFields();
+            }
+        }
+    }//GEN-LAST:event_AddProcessActionPerformed
+
+    private void OPOptionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_OPOptionItemStateChanged
+        // TODO add your handling code here:
+        this.setMET();
+    }//GEN-LAST:event_OPOptionItemStateChanged
+
+    private void PNFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_PNFieldKeyTyped
+        // TODO add your handling code here:
+        if(!java.lang.Character.isAlphabetic(evt.getKeyChar()) && (evt.getKeyChar() == ' ' && this.PNField.getText().charAt(this.PNField.getText().length() - 1) == ' ')){
+            evt.consume();
+        }else if(java.lang.Character.isDigit(evt.getKeyChar())){
+            evt.consume();
+        }
+    }//GEN-LAST:event_PNFieldKeyTyped
+
+    private void OPN1FieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_OPN1FieldKeyTyped
+        // TODO add your handling code here:
+        if(!(this.OPN1Field.getText() + evt.getKeyChar()).matches("([0-9]+\\.?[0-9]+)|([0-9]+)|[0-9]+\\.?")){
+            evt.consume();
+        }
+    }//GEN-LAST:event_OPN1FieldKeyTyped
+
+    private void OPN2FieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_OPN2FieldKeyTyped
+        // TODO add your handling code here:
+        if(!(this.OPN2Field.getText() + evt.getKeyChar()).matches("([0-9]+\\.?[0-9]+)|([0-9]+)|[0-9]+\\.?")){
+            evt.consume();
+        }
+    }//GEN-LAST:event_OPN2FieldKeyTyped
+
+    private void ResetFieldsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ResetFieldsActionPerformed
+        // TODO add your handling code here:
+        this.resetAllFields();
+    }//GEN-LAST:event_ResetFieldsActionPerformed
+
+    private void RandomizeDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RandomizeDataActionPerformed
+        // TODO add your handling code here:
+        this.randomize();
+    }//GEN-LAST:event_RandomizeDataActionPerformed
 
     /**
      * @param args the command line arguments
@@ -81,5 +515,25 @@ public class BPM extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AddProcess;
+    private javax.swing.JLabel BNLabel;
+    private javax.swing.JLabel BNNumber;
+    private javax.swing.JPanel BPMPanel;
+    private javax.swing.JTextField METField;
+    private javax.swing.JLabel METLabel;
+    private javax.swing.JLabel OPLabel;
+    private javax.swing.JTextField OPN1Field;
+    private javax.swing.JTextField OPN2Field;
+    private javax.swing.JComboBox<String> OPOption;
+    private javax.swing.JLabel PALabel;
+    private javax.swing.JLabel PANumber;
+    private javax.swing.JTextField PIDField;
+    private javax.swing.JLabel PIDLabel;
+    private javax.swing.JTextField PNField;
+    private javax.swing.JLabel PNLabel;
+    private javax.swing.JButton RandomizeData;
+    private javax.swing.JButton ResetFields;
+    private javax.swing.JButton StartSimulation;
+    private javax.swing.JSeparator jSeparator1;
     // End of variables declaration//GEN-END:variables
 }
