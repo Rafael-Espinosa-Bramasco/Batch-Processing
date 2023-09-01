@@ -4,9 +4,12 @@
  */
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import libs.TextPrompt;
 import libs.Process;
+import libs.Batch;
 /**
  *
  * @author rafael
@@ -52,6 +55,7 @@ public class BPM extends javax.swing.JFrame {
     // Variables
     int PAG_ID = 0;                // ID generator
     ArrayList<Process> IDs = new ArrayList();    // ID's array
+    ArrayList<Batch> Batchs = new ArrayList();
     int ProcessCount;
     int BatchsNeeded;
     
@@ -97,7 +101,7 @@ public class BPM extends javax.swing.JFrame {
 
         METLabel.setText("Maximum Estimated Time");
 
-        PNLabel.setText("Program Name");
+        PNLabel.setText("Programmer Name");
 
         OPLabel.setText("Operation");
 
@@ -168,6 +172,11 @@ public class BPM extends javax.swing.JFrame {
         BNNumber.setText("0");
 
         StartSimulation.setText("Start Simulation");
+        StartSimulation.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                StartSimulationActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout BPMPanelLayout = new javax.swing.GroupLayout(BPMPanel);
         BPMPanel.setLayout(BPMPanelLayout);
@@ -428,7 +437,7 @@ public class BPM extends javax.swing.JFrame {
             }
             else {
                 // ID doesn't exists, ADD THE ELEMENT
-                Process NewProcess = new Process(this.PNField.getText(), this.OPN1Field.getText(), this.OPN1Field.getText(), this.OPOption.getSelectedItem().toString(), Integer.parseInt(this.METField.getText()), this.PIDField.getText());
+                Process NewProcess = new Process(this.PNField.getText(), this.OPN1Field.getText(), this.OPN2Field.getText(), this.OPOption.getSelectedItem().toString(), Integer.parseInt(this.METField.getText()), this.PIDField.getText());
                 this.IDs.add(NewProcess);
                 
                 this.PAG_ID++;
@@ -478,6 +487,40 @@ public class BPM extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.randomize();
     }//GEN-LAST:event_RandomizeDataActionPerformed
+
+    private void StartSimulationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartSimulationActionPerformed
+        // TODO add your handling code here:
+        if(this.IDs.size() == 0){
+            JOptionPane.showMessageDialog(this, "Please add some processes first!");
+            return;
+        }
+        
+        int BID = 1;
+        while(this.ProcessCount > 0){
+            Batch newBatch = new Batch(String.valueOf(BID).concat("BID"));
+            while(newBatch.getNumberOfProcesses() < 4 && this.ProcessCount > 0){
+                newBatch.addProcess(this.IDs.get(0));
+                this.IDs.remove(0);
+                this.ProcessCount--;
+            }
+            this.Batchs.add(newBatch);
+            BID++;
+        }
+        
+        /*if(this.IDs.size() == 0 && BID == 0 && this.ProcessCount == 0){
+            System.out.println("Se logro");
+            System.out.println(this.Batchs);
+            for(int i = 0 ; i < this.Batchs.size() ; i++){
+                System.out.println(this.Batchs.get(i).getActualProcess().getProgramID());
+            }
+        }*/
+        
+        BPMSimulation BPMS = null;
+        BPMS = new BPMSimulation(this.Batchs);
+        BPMS.setVisible(true);
+        
+        this.dispose();
+    }//GEN-LAST:event_StartSimulationActionPerformed
 
     /**
      * @param args the command line arguments

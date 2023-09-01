@@ -180,7 +180,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="PNLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Program Name"/>
+            <Property name="text" type="java.lang.String" value="Programmer Name"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="OPLabel">
@@ -296,6 +296,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Start Simulation"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="StartSimulationActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

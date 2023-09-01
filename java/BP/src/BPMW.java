@@ -113,6 +113,7 @@ public class BPMW extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Batch Preparation Mode window is already active!");
         }else {
             this.bpMode.setVisible(true);
+            this.dispose();
         }
     }//GEN-LAST:event_BPM_btnActionPerformed
 
