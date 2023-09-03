@@ -4,8 +4,6 @@
  */
 import java.awt.Font;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import libs.TextPrompt;
 import libs.Process;
@@ -382,43 +380,43 @@ public class BPM extends javax.swing.JFrame {
         this.BNNumber.setText(String.valueOf(this.BatchsNeeded));
     }
     
-    private int validateNumType(String x){
-        if(x.matches("[0-9]+")){
-            return 1;
-        }
-        else if(x.matches("[0-9]+\\.?[0-9]+")){
-            return 2;
-        }
-        else {
-            return 0;
-        }
-    }
-    
     private void randomize(){
         int numero = (int)(Math.random()*10+1);
         this.PNField.setText(this.Names.get((int)(Math.random()*11)));
-        this.OPN1Field.setText(String.valueOf((int)(Math.random()*1000)));
-        this.OPN2Field.setText(String.valueOf((int)(Math.random()*1000+1)));
+        this.OPN1Field.setText(String.valueOf((int)(Math.random()*100)));
+        this.OPN2Field.setText(String.valueOf((int)(Math.random()*100)));
         
         // Randomize operation
-        switch((int)(Math.random()*6+1)){
+        switch((int)(Math.random()*12+1)){
             case 1:
+            case 2:
                 this.OPOption.selectWithKeyChar('+');
                 break;
-            case 2:
+            case 3:
+            case 4:
                 this.OPOption.selectWithKeyChar('-');
                 break;
-            case 3:
+            case 5:
+            case 6:
                 this.OPOption.selectWithKeyChar('*');
                 break;
-            case 4:
+            case 7:
+            case 8:
                 this.OPOption.selectWithKeyChar('/');
+                if(Double.parseDouble(this.OPN2Field.getText()) > 100.0){
+                    this.OPN2Field.setText(String.valueOf((int)(Math.random()*1000+1)));
+                }
                 break;
-            case 5:
+            case 9:
+            case 10:
                 this.OPOption.selectWithKeyChar('%');
                 break;
-            case 6:
+            case 11:
+            case 12:
                 this.OPOption.selectWithKeyChar('p');
+                if(Double.parseDouble(this.OPN2Field.getText()) > 100.0){
+                    this.OPN2Field.setText(String.valueOf((int)(Math.random()*100+0)));
+                }
                 break;
         }
         
@@ -452,6 +450,9 @@ public class BPM extends javax.swing.JFrame {
 
     private void OPOptionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_OPOptionItemStateChanged
         // TODO add your handling code here:
+        if(evt.getItem().toString().compareTo("/") == 0 && Double.parseDouble(this.OPN2Field.getText()) == 0.0){
+            JOptionPane.showMessageDialog(this, "Second operand cannot be 0 on division!");
+        }
         this.setMET();
     }//GEN-LAST:event_OPOptionItemStateChanged
 
@@ -515,11 +516,16 @@ public class BPM extends javax.swing.JFrame {
             }
         }*/
         
-        BPMSimulation BPMS = null;
-        BPMS = new BPMSimulation(this.Batchs);
+        BPMSimulation BPMS = new BPMSimulation();
         BPMS.setVisible(true);
         
-        this.dispose();
+        this.PAG_ID = 0;
+        this.PIDField.setText("P0ID");
+        this.PANumber.setText("0");
+        this.BNNumber.setText("0");
+        
+        BPMThread processesThread = new BPMThread(this.Batchs, BPMS);
+        processesThread.start();
     }//GEN-LAST:event_StartSimulationActionPerformed
 
     /**

@@ -1,11 +1,6 @@
 
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
 import libs.Batch;
-import libs.Process;
-import libs.Wait;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -21,26 +16,16 @@ public class BPMSimulation extends javax.swing.JFrame {
     /**
      * Creates new form BPMSimulation
      */
-    public BPMSimulation(ArrayList<Batch> Batchs) {
-        initComponents();
-        this.pendingBatchsCount = Batchs.size();
-        this.PendingBatchs = Batchs;
-        
-        this.PBNumber.setText(String.valueOf(this.pendingBatchsCount));
-        this.GC = 0;
-        this.GCounter.setText("0 Seconds");
-    }
     
     public BPMSimulation(){
         initComponents();
+        this.model = (DefaultTableModel) this.BETable.getModel();
     }
     
     // Variables
     int pendingBatchsCount;
-    ArrayList<Batch> PendingBatchs;
     int GC;
-    int TEV;
-    int TLV;
+    DefaultTableModel model;
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -59,8 +44,8 @@ public class BPMSimulation extends javax.swing.JFrame {
         PBNumber = new javax.swing.JLabel();
         BIDNumber = new javax.swing.JLabel();
         PIDNumber = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        Table = new javax.swing.JScrollPane();
+        BETable = new javax.swing.JTable();
         jLabel5 = new javax.swing.JLabel();
         BMETNumber = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -75,7 +60,6 @@ public class BPMSimulation extends javax.swing.JFrame {
         TLeft = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         GCounter = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Batch Processing Simulation");
@@ -94,14 +78,14 @@ public class BPMSimulation extends javax.swing.JFrame {
 
         PIDNumber.setText("PID");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        BETable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
             },
             new String [] {
-                "Program ID", "Operation","Result"
+                "Batch ID" ,"Program ID", "Operation","Result"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        Table.setViewportView(BETable);
 
         jLabel5.setText("MET");
 
@@ -131,13 +115,6 @@ public class BPMSimulation extends javax.swing.JFrame {
 
         GCounter.setText("#");
 
-        jButton1.setText("Start");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -159,7 +136,7 @@ public class BPMSimulation extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(PBNumber)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 233, Short.MAX_VALUE)
                                 .addComponent(jLabel4)
                                 .addGap(139, 139, 139))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -171,11 +148,9 @@ public class BPMSimulation extends javax.swing.JFrame {
                                     .addComponent(Operation)
                                     .addComponent(PMET)
                                     .addComponent(GCounter))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jButton1)
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap())))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(Table, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel10)
@@ -232,17 +207,12 @@ public class BPMSimulation extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(TElapsed)
                             .addComponent(jLabel10)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel11)
-                            .addComponent(TLeft)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
-                        .addComponent(jButton1)))
-                .addContainerGap(23, Short.MAX_VALUE))
+                    .addComponent(Table, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(TLeft))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -257,23 +227,48 @@ public class BPMSimulation extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try {
-            // TODO add your handling code here:
-            this.SIMS();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(BPMSimulation.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     // Funcs
-    private void updatePB(){
+    
+    public void addEndedProcess(String BID, String PID, String OP, String RES){
+        this.model.addRow(new Object[]{BID, PID, OP, RES});
+    }
+    
+    public void setBIDNumber(String x){
+        this.BIDNumber.setText(x);
+    }
+    public void setBMETNumber(String x){
+        this.BMETNumber.setText(x);
+    }
+    public void setPIDNumber(String x){
+        this.PIDNumber.setText(x);
+    }
+    public void setPName(String x){
+        this.PName.setText(x);
+    }
+    public void setOperation(String x){
+        this.Operation.setText(x);
+    }
+    public void setPMET(String x){
+        this.PMET.setText(x);
+    }
+    public void setTElapsed(String x){
+        this.TElapsed.setText(x);
+    }
+    public void setTLeft(String x){
+        this.TLeft.setText(x);
+    }
+    public void setGCounter(String x){
+        this.GCounter.setText(x);
+    }
+    
+    public void updatePB(){
         this.PBNumber.setText(String.valueOf(this.pendingBatchsCount));
     }
     
-    private int getBMET(Batch B){
+    public int getBMET(Batch B){
         int sum = 0;
         for(int i = 0; i < B.getNumberOfProcesses() ; i++){
             sum += B.GET(i).getMETime();
@@ -281,53 +276,8 @@ public class BPMSimulation extends javax.swing.JFrame {
         return sum;
     }
     
-    private void updateGC(){
+    public void updateGC(){
         this.GCounter.setText(String.valueOf(this.GC).concat(" Seconds"));
-    }
-    
-    private void SIMS() throws InterruptedException{
-        //// SIMULATION
-        while(this.pendingBatchsCount > 0){
-            // PBC decrements by one
-            Batch AB = this.PendingBatchs.get(0);
-            this.pendingBatchsCount--;
-            // Delete the taken batch
-            this.PendingBatchs.remove(0);
-            
-            this.BIDNumber.setText(AB.getBatchID());
-            this.BMETNumber.setText(String.valueOf(this.getBMET(AB)).concat(" Seconds"));
-            
-            this.updatePB();
-            
-            // Take processes
-            while(AB.getNumberOfProcesses() > 0){
-                Process AP = AB.GET(0);
-                AB.REMOVE(0);
-                TEV = 0;
-                TLV = AP.getMETime();
-                this.PIDNumber.setText(AP.getProgramID());
-                this.PName.setText(AP.getProgrammerName());
-                this.Operation.setText(AP.getNumber1().concat(AP.getOperation()).concat(AP.getNumber2()));
-                this.PMET.setText(String.valueOf(AP.getMETime()));
-                this.TElapsed.setText("0 Seconds");
-                this.TLeft.setText(String.valueOf(TLV).concat(" Seconds"));
-                
-                while(TLV > 0){
-                    Wait myWait = new Wait(1000);
-                    myWait.start();
-                    TLV--;
-                    TEV++;
-                    myWait.join();
-                    this.GC++;
-                    this.updateGC();
-                    this.TElapsed.setText(String.valueOf(TEV).concat(" Seconds"));
-                    this.TLeft.setText(String.valueOf(TLV).concat(" Seconds"));
-                }
-                Wait myWait2 = new Wait(1000);
-                myWait2.start();
-                myWait2.join();
-            }
-        }
     }
     
     /**
@@ -366,6 +316,7 @@ public class BPMSimulation extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable BETable;
     private javax.swing.JLabel BIDNumber;
     private javax.swing.JLabel BMETNumber;
     private javax.swing.JLabel GCounter;
@@ -376,7 +327,7 @@ public class BPMSimulation extends javax.swing.JFrame {
     private javax.swing.JLabel PName;
     private javax.swing.JLabel TElapsed;
     private javax.swing.JLabel TLeft;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JScrollPane Table;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -389,7 +340,5 @@ public class BPMSimulation extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }
