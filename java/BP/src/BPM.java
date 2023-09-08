@@ -20,11 +20,22 @@ public class BPM extends javax.swing.JFrame {
     public BPM() {
         initComponents();
         
+        this.state = true;
+            /* State values:
+            *       false -> PBI
+            *       true -> PBN
+            */
+        
+        this.swapAvalibleFields();
+        
+        this.PBI_BTN.doClick();
+        
         TextPrompt PNPH = new TextPrompt("Your Name",this.PNField);
         TextPrompt OP1PH = new TextPrompt("X",this.OPN1Field);
         TextPrompt OP2PH = new TextPrompt("Y",this.OPN2Field);
         TextPrompt METPH = new TextPrompt("MET in seconds",this.METField);
         TextPrompt PIDPH = new TextPrompt("Program ID",this.PIDField);
+        TextPrompt PBNPH = new TextPrompt("Number of Processes",this.PBN_Input);
         
         PNPH.changeAlpha(0.75f);
         PNPH.changeStyle(Font.ITALIC);
@@ -36,6 +47,8 @@ public class BPM extends javax.swing.JFrame {
         METPH.changeStyle(Font.ITALIC);
         PIDPH.changeAlpha(0.75f);
         PIDPH.changeStyle(Font.ITALIC);
+        PBNPH.changeAlpha(0.75f);
+        PBNPH.changeStyle(Font.ITALIC);
         
         this.METField.setEnabled(false);
         
@@ -56,9 +69,14 @@ public class BPM extends javax.swing.JFrame {
     ArrayList<Batch> Batchs = new ArrayList();
     int ProcessCount;
     int BatchsNeeded;
+    boolean state;
+    BPMThread processesThread;
     
     // To randomize
     ArrayList<String> Names = new ArrayList();
+    
+    // PBN variables
+    ArrayList<Batch> PBNBatchs = new ArrayList();
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -69,6 +87,7 @@ public class BPM extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        PBX = new javax.swing.ButtonGroup();
         BPMPanel = new javax.swing.JPanel();
         METLabel = new javax.swing.JLabel();
         PNLabel = new javax.swing.JLabel();
@@ -89,6 +108,12 @@ public class BPM extends javax.swing.JFrame {
         PANumber = new javax.swing.JLabel();
         BNNumber = new javax.swing.JLabel();
         StartSimulation = new javax.swing.JButton();
+        PBI_BTN = new javax.swing.JRadioButton();
+        PBN_BTN = new javax.swing.JRadioButton();
+        PBN_Input = new javax.swing.JTextField();
+        jSeparator2 = new javax.swing.JSeparator();
+        BNLabelPBN = new javax.swing.JLabel();
+        BNNumberPBN = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Batch Processing - MT Panel");
@@ -176,6 +201,33 @@ public class BPM extends javax.swing.JFrame {
             }
         });
 
+        PBX.add(PBI_BTN);
+        PBI_BTN.setText("Preparation by Input");
+        PBI_BTN.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                PBI_BTNItemStateChanged(evt);
+            }
+        });
+
+        PBX.add(PBN_BTN);
+        PBN_BTN.setText("Preparation by Number");
+
+        PBN_Input.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                PBN_InputKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                PBN_InputKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                PBN_InputKeyTyped(evt);
+            }
+        });
+
+        BNLabelPBN.setText("Batch's Needed");
+
+        BNNumberPBN.setText("0");
+
         javax.swing.GroupLayout BPMPanelLayout = new javax.swing.GroupLayout(BPMPanel);
         BPMPanel.setLayout(BPMPanelLayout);
         BPMPanelLayout.setHorizontalGroup(
@@ -205,73 +257,95 @@ public class BPM extends javax.swing.JFrame {
                                 .addComponent(OPN2Field, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(METField, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(BPMPanelLayout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(ResetFields)
-                        .addGap(18, 18, 18)
-                        .addComponent(RandomizeData)
-                        .addGap(18, 18, 18)
-                        .addComponent(AddProcess)))
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(BPMPanelLayout.createSequentialGroup()
+                        .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(RandomizeData, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(ResetFields, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(AddProcess)
+                        .addGap(24, 24, 24)
                         .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(PALabel)
                             .addComponent(BNLabel))
                         .addGap(43, 43, 43)
                         .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(BNNumber)
-                            .addComponent(PANumber))
-                        .addGap(0, 68, Short.MAX_VALUE))
-                    .addComponent(StartSimulation, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(PANumber))))
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(StartSimulation, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(PBN_Input)
+                    .addComponent(jSeparator2)
+                    .addGroup(BPMPanelLayout.createSequentialGroup()
+                        .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(PBN_BTN)
+                            .addComponent(PBI_BTN)
+                            .addGroup(BPMPanelLayout.createSequentialGroup()
+                                .addComponent(BNLabelPBN)
+                                .addGap(43, 43, 43)
+                                .addComponent(BNNumberPBN)))
+                        .addGap(0, 59, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         BPMPanelLayout.setVerticalGroup(
             BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(BPMPanelLayout.createSequentialGroup()
-                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(BPMPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jSeparator1))
-                    .addGroup(BPMPanelLayout.createSequentialGroup()
-                        .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, BPMPanelLayout.createSequentialGroup()
+                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, BPMPanelLayout.createSequentialGroup()
+                        .addGap(17, 17, 17)
+                        .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(PNLabel)
+                            .addComponent(PNField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(8, 8, 8)
+                        .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(OPLabel)
+                            .addComponent(OPN2Field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(OPN1Field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(OPOption, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(8, 8, 8)
+                        .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(METLabel)
+                            .addComponent(METField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(8, 8, 8)
+                        .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(PIDLabel)
+                            .addComponent(PIDField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(BPMPanelLayout.createSequentialGroup()
-                                .addGap(17, 17, 17)
                                 .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(PNLabel)
-                                    .addComponent(PNField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(8, 8, 8)
-                                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(OPLabel)
-                                    .addComponent(OPN2Field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(OPN1Field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(OPOption, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(8, 8, 8)
-                                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(METLabel)
-                                    .addComponent(METField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(8, 8, 8)
-                                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(PIDLabel)
-                                    .addComponent(PIDField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(31, 31, 31)
-                                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(ResetFields)
-                                    .addComponent(RandomizeData)
-                                    .addComponent(AddProcess)))
+                                    .addComponent(AddProcess)
+                                    .addComponent(RandomizeData))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(ResetFields))
                             .addGroup(BPMPanelLayout.createSequentialGroup()
-                                .addGap(19, 19, 19)
                                 .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(PALabel)
                                     .addComponent(PANumber))
                                 .addGap(18, 18, 18)
                                 .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(BNLabel)
-                                    .addComponent(BNNumber))
-                                .addGap(37, 37, 37)
-                                .addComponent(StartSimulation, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(21, 21, 21)))
+                                    .addComponent(BNNumber))))
+                        .addGap(20, 20, 20))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, BPMPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(BPMPanelLayout.createSequentialGroup()
+                                .addComponent(PBI_BTN)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(PBN_BTN)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(PBN_Input, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addGroup(BPMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(BNLabelPBN)
+                                    .addComponent(BNNumberPBN))
+                                .addGap(18, 18, 18)
+                                .addComponent(StartSimulation, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jSeparator1))))
                 .addContainerGap())
         );
 
@@ -283,7 +357,7 @@ public class BPM extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(BPMPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(BPMPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
         );
 
         pack();
@@ -291,6 +365,66 @@ public class BPM extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     // My Functions
+    
+    public void pauseThread() throws InterruptedException{
+        synchronized(processesThread){
+            processesThread.suspend();
+        }
+    }
+    
+    public void continueThread(){
+        synchronized(processesThread){
+            processesThread.resume();
+        }
+    }
+    
+    private void calculatePBsPBN(){
+        // Calculate new things
+        if(!this.PBN_Input.getText().isEmpty()){
+            this.BatchsNeeded = (int) java.lang.Math.ceil(Double.parseDouble(this.PBN_Input.getText()) / 3.0);
+            this.BNNumberPBN.setText(String.valueOf(this.BatchsNeeded));
+        }else{
+            this.BNNumberPBN.setText("0");
+        }
+    }
+    
+    private void swapAvalibleFields(){
+        if(this.state){
+            // Switch PBI to PBN
+            this.PNField.setEnabled(false);
+            this.OPN1Field.setEnabled(false);
+            this.OPN2Field.setEnabled(false);
+            this.OPOption.setEnabled(false);
+            this.METField.setText("Preparation by Input disabled!");
+            this.PIDField.setEnabled(false);
+            this.ResetFields.setEnabled(false);
+            this.RandomizeData.setEnabled(false);
+            this.AddProcess.setEnabled(false);
+            this.PANumber.setText("X");
+            this.BNNumber.setText("X");
+            
+            this.PBN_Input.setEnabled(true);
+            this.calculatePBsPBN();
+        }else{
+            // Switch PBN to PBI
+            this.PNField.setEnabled(true);
+            this.OPN1Field.setEnabled(true);
+            this.OPN2Field.setEnabled(true);
+            this.OPOption.setEnabled(true);
+            this.setMET();
+            this.PIDField.setEnabled(true);
+            this.ResetFields.setEnabled(true);
+            this.RandomizeData.setEnabled(true);
+            this.AddProcess.setEnabled(true);
+            
+            this.calculateB_P();
+            
+            this.PBN_Input.setEnabled(false);
+            
+            this.BNNumberPBN.setText("X");
+        }
+        this.state = !this.state;
+    }
     
     private void initRandomValues(){
         Names.add("Rafael Espinosa");
@@ -380,44 +514,88 @@ public class BPM extends javax.swing.JFrame {
         this.BNNumber.setText(String.valueOf(this.BatchsNeeded));
     }
     
+    private void randomizePBN(){
+        
+        // Programmer name isnt necessary
+        int OP1;
+        int OP2;
+        String OP = "";
+        int MET;
+        String PID;
+        int PIDCount = 0;
+        int BIDCount = 0;
+        
+        int numberOfProcesses = Integer.parseInt(this.PBN_Input.getText());
+        
+        Process newProcess;
+        Batch newBatch = null;
+        
+        while(numberOfProcesses > 0){
+            
+            if(newBatch == null){
+                newBatch = new Batch(String.valueOf(BIDCount).concat("BID"));
+                BIDCount++;
+            }else if(newBatch.getNumberOfProcesses() == 3){
+                this.PBNBatchs.add(newBatch);
+                newBatch = new Batch(String.valueOf(BIDCount).concat("BID"));
+                BIDCount++;
+            }
+            
+            OP1 = (int) (Math.random() * 100);
+            
+            switch((int) (Math.random() *10+1)){
+                case 1, 2 -> {OP = "+";}
+                case 3, 4 -> {OP = "-";}
+                case 5, 6 -> {OP = "x";}
+                case 7, 8 -> {OP = "/";}
+                case 9, 10 -> {OP = "%";}
+            }
+            
+            MET = (int) (7 + Math.random() * (18 - 7));
+            
+            if(OP.compareTo("/") == 0){
+                OP2 = (int) (Math.random() *100+1);
+            }else{
+                OP2 = (int) (Math.random() *100+0);
+            }
+
+            PID = "P".concat(String.valueOf(PIDCount)).concat("ID");
+            PIDCount++;
+            
+            newProcess = new Process("Randomizer",String.valueOf(OP1),String.valueOf(OP2),OP,MET,PID);
+            newBatch.addProcess(newProcess);
+            
+            if(numberOfProcesses == 1){
+                this.PBNBatchs.add(newBatch);
+            }
+            
+            numberOfProcesses--;
+        }
+    }
+    
     private void randomize(){
-        int numero = (int)(Math.random()*10+1);
         this.PNField.setText(this.Names.get((int)(Math.random()*11)));
         this.OPN1Field.setText(String.valueOf((int)(Math.random()*100)));
         this.OPN2Field.setText(String.valueOf((int)(Math.random()*100)));
         
         // Randomize operation
         switch((int)(Math.random()*12+1)){
-            case 1:
-            case 2:
-                this.OPOption.selectWithKeyChar('+');
-                break;
-            case 3:
-            case 4:
-                this.OPOption.selectWithKeyChar('-');
-                break;
-            case 5:
-            case 6:
-                this.OPOption.selectWithKeyChar('*');
-                break;
-            case 7:
-            case 8:
+            case 1, 2 -> this.OPOption.selectWithKeyChar('+');
+            case 3, 4 -> this.OPOption.selectWithKeyChar('-');
+            case 5, 6 -> this.OPOption.selectWithKeyChar('*');
+            case 7, 8 -> {
                 this.OPOption.selectWithKeyChar('/');
                 if(Double.parseDouble(this.OPN2Field.getText()) > 100.0){
                     this.OPN2Field.setText(String.valueOf((int)(Math.random()*1000+1)));
                 }
-                break;
-            case 9:
-            case 10:
-                this.OPOption.selectWithKeyChar('%');
-                break;
-            case 11:
-            case 12:
+            }
+            case 9, 10 -> this.OPOption.selectWithKeyChar('%');
+            case 11, 12 -> {
                 this.OPOption.selectWithKeyChar('p');
                 if(Double.parseDouble(this.OPN2Field.getText()) > 100.0){
                     this.OPN2Field.setText(String.valueOf((int)(Math.random()*100+0)));
                 }
-                break;
+            }
         }
         
         this.setMET();
@@ -450,7 +628,7 @@ public class BPM extends javax.swing.JFrame {
 
     private void OPOptionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_OPOptionItemStateChanged
         // TODO add your handling code here:
-        if(evt.getItem().toString().compareTo("/") == 0 && Double.parseDouble(this.OPN2Field.getText()) == 0.0){
+        if(evt.getItem().toString().compareTo("/") == 0 && Double.parseDouble(this.OPN2Field.getText()) == 0.0 || this.OPN2Field.getText().isEmpty()){
             JOptionPane.showMessageDialog(this, "Second operand cannot be 0 on division!");
         }
         this.setMET();
@@ -491,42 +669,83 @@ public class BPM extends javax.swing.JFrame {
 
     private void StartSimulationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartSimulationActionPerformed
         // TODO add your handling code here:
-        if(this.IDs.size() == 0){
-            JOptionPane.showMessageDialog(this, "Please add some processes first!");
-            return;
-        }
-        
-        int BID = 1;
-        while(this.ProcessCount > 0){
-            Batch newBatch = new Batch(String.valueOf(BID).concat("BID"));
-            while(newBatch.getNumberOfProcesses() < 4 && this.ProcessCount > 0){
-                newBatch.addProcess(this.IDs.get(0));
-                this.IDs.remove(0);
-                this.ProcessCount--;
+        if(this.PBI_BTN.isSelected()){
+            // PBI mode
+            if(this.IDs.isEmpty()){
+                JOptionPane.showMessageDialog(this, "Please add some processes first!");
+                return;
             }
-            this.Batchs.add(newBatch);
-            BID++;
-        }
-        
-        /*if(this.IDs.size() == 0 && BID == 0 && this.ProcessCount == 0){
-            System.out.println("Se logro");
-            System.out.println(this.Batchs);
-            for(int i = 0 ; i < this.Batchs.size() ; i++){
-                System.out.println(this.Batchs.get(i).getActualProcess().getProgramID());
+
+            int BID = 1;
+            while(this.ProcessCount > 0){
+                Batch newBatch = new Batch(String.valueOf(BID).concat("BID"));
+                while(newBatch.getNumberOfProcesses() < 4 && this.ProcessCount > 0){
+                    newBatch.addProcess(this.IDs.get(0));
+                    this.IDs.remove(0);
+                    this.ProcessCount--;
+                }
+                this.Batchs.add(newBatch);
+                BID++;
             }
-        }*/
-        
-        BPMSimulation BPMS = new BPMSimulation();
-        BPMS.setVisible(true);
-        
-        this.PAG_ID = 0;
-        this.PIDField.setText("P0ID");
-        this.PANumber.setText("0");
-        this.BNNumber.setText("0");
-        
-        BPMThread processesThread = new BPMThread(this.Batchs, BPMS);
-        processesThread.start();
+
+            /*if(this.IDs.size() == 0 && BID == 0 && this.ProcessCount == 0){
+                System.out.println("Se logro");
+                System.out.println(this.Batchs);
+                for(int i = 0 ; i < this.Batchs.size() ; i++){
+                    System.out.println(this.Batchs.get(i).getActualProcess().getProgramID());
+                }
+            }*/
+
+            BPMSimulation BPMS = new BPMSimulation();
+            BPMS.setVisible(true);
+
+            this.PAG_ID = 0;
+            this.PIDField.setText("P0ID");
+            this.PANumber.setText("0");
+            this.BNNumber.setText("0");
+
+            processesThread = new BPMThread(this.Batchs, BPMS);
+            processesThread.start();
+        }
+        else{
+            // PBN mode
+            if(this.PBN_Input.getText().isEmpty() || Integer.parseInt(this.PBN_Input.getText()) == 0){
+                JOptionPane.showMessageDialog(this, "The number field cant be empty or Zero!");
+                this.PBN_Input.requestFocus();
+            }else{
+                this.randomizePBN();
+                
+                BPMSimulation BPMS = new BPMSimulation();
+                BPMS.setVisible(true);
+                BPMS.setBPM(this);
+                
+                processesThread = new BPMThread(this.PBNBatchs, BPMS);
+                processesThread.start();
+                BPMS.setThread(processesThread);
+            }
+        }
     }//GEN-LAST:event_StartSimulationActionPerformed
+
+    private void PBI_BTNItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_PBI_BTNItemStateChanged
+        // TODO add your handling code here:
+        this.swapAvalibleFields();
+    }//GEN-LAST:event_PBI_BTNItemStateChanged
+
+    private void PBN_InputKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_PBN_InputKeyTyped
+        // TODO add your handling code here:
+        if(!(this.PBN_Input.getText() + evt.getKeyChar()).matches("[0-9]+")){
+            evt.consume();
+        }
+    }//GEN-LAST:event_PBN_InputKeyTyped
+
+    private void PBN_InputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_PBN_InputKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_PBN_InputKeyPressed
+
+    private void PBN_InputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_PBN_InputKeyReleased
+        // TODO add your handling code here:
+        this.calculatePBsPBN();
+    }//GEN-LAST:event_PBN_InputKeyReleased
 
     /**
      * @param args the command line arguments
@@ -566,7 +785,9 @@ public class BPM extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AddProcess;
     private javax.swing.JLabel BNLabel;
+    private javax.swing.JLabel BNLabelPBN;
     private javax.swing.JLabel BNNumber;
+    private javax.swing.JLabel BNNumberPBN;
     private javax.swing.JPanel BPMPanel;
     private javax.swing.JTextField METField;
     private javax.swing.JLabel METLabel;
@@ -576,6 +797,10 @@ public class BPM extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> OPOption;
     private javax.swing.JLabel PALabel;
     private javax.swing.JLabel PANumber;
+    private javax.swing.JRadioButton PBI_BTN;
+    private javax.swing.JRadioButton PBN_BTN;
+    private javax.swing.JTextField PBN_Input;
+    private javax.swing.ButtonGroup PBX;
     private javax.swing.JTextField PIDField;
     private javax.swing.JLabel PIDLabel;
     private javax.swing.JTextField PNField;
@@ -584,5 +809,6 @@ public class BPM extends javax.swing.JFrame {
     private javax.swing.JButton ResetFields;
     private javax.swing.JButton StartSimulation;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
     // End of variables declaration//GEN-END:variables
 }

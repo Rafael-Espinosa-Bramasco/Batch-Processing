@@ -20,6 +20,8 @@ public class BPMThread extends Thread {
     public BPMThread(ArrayList<Batch> BatchLists, BPMSimulation UI){
         this.PendingBatchs = BatchLists;
         this.UserInterface = UI;
+        this.genErr = false;
+        this.genInt = false;
     }
     
     // Variables
@@ -28,9 +30,22 @@ public class BPMThread extends Thread {
     String OPformated;
     int TEV;
     int TLV;
+    boolean genErr;
+    boolean genInt;
+    
+    // Functions
+    
+    public void setERR(boolean x){
+        this.genErr = x;
+    }
+    
+    public void setInt(boolean x){
+        this.genInt = x;
+    }
     
     @Override
     public void run() {
+        this.UserInterface.setSTATUS("ON PROCESS");
         this.UserInterface.pendingBatchsCount = this.PendingBatchs.size();
         
         this.UserInterface.setGCounter("0 Seconds");
@@ -51,7 +66,10 @@ public class BPMThread extends Thread {
             while(AB.getNumberOfProcesses() > 0){
                 Process AP = AB.GET(0);
                 AB.REMOVE(0);
-                TEV = 0;
+                this.updatePendingProcesses(AB);
+                this.UserInterface.setAP(AP);
+                this.UserInterface.setAB(AB);
+                TEV = AP.getTLTime();
                 TLV = AP.getMETime();
                 
                 try {
@@ -64,10 +82,29 @@ public class BPMThread extends Thread {
                 this.UserInterface.setPName(AP.getProgrammerName());
                 this.UserInterface.setOperation(AP.getNumber1().concat(" ").concat(AP.getOperation()).concat(" ").concat(AP.getNumber2()));
                 this.UserInterface.setPMET(String.valueOf(AP.getMETime()));
-                this.UserInterface.setTElapsed("0 Seconds");
+                this.UserInterface.setTElapsed(String.valueOf(AP.getTLTime()).concat(" Seconds"));
                 this.UserInterface.setTLeft(String.valueOf(TLV).concat(" Seconds"));
                 
+                if(this.genErr){
+                    this.genErr = false;
+                    continue;
+                }
+                if(this.genInt){
+                    this.genInt = false;
+                    AB.addProcess(AP);
+                    continue;
+                }
+                
                 while(TLV > 0){
+                    if(this.genErr){
+                        break;
+                    }
+                    if(this.genInt){
+                        AP.setMETime(TLV);
+                        AP.setTLTime(TEV);
+                        break;
+                    }
+                    
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException ex) {
@@ -79,21 +116,44 @@ public class BPMThread extends Thread {
                     this.UserInterface.updateGC();
                     this.UserInterface.setTElapsed(String.valueOf(TEV).concat(" Seconds"));
                     this.UserInterface.setTLeft(String.valueOf(TLV).concat(" Seconds"));
+                    
+                    if(this.genErr){
+                        break;
+                    }
+                    if(this.genInt){
+                        AP.setMETime(TLV);
+                        AP.setTLTime(TEV);
+                        break;
+                    }
                 }
                 
                 // Update table
-                this.OPformated = AP.getNumber1().concat(" ").concat(AP.getOperation()).concat(" ").concat(AP.getNumber2());
-                String RES = this.doMath(AP.getNumber1(), AP.getOperation(), AP.getNumber2());
-                this.UserInterface.addEndedProcess(AB.getBatchID(), AP.getProgramID(), this.OPformated, RES);
-                
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(BPMThread.class.getName()).log(Level.SEVERE, null, ex);
+                if(this.genErr){
+                    this.genErr = false;
+                }else if(this.genInt){
+                    this.genInt = false;
+                    AB.addProcess(AP);
+                }else{
+                    this.OPformated = AP.getNumber1().concat(" ").concat(AP.getOperation()).concat(" ").concat(AP.getNumber2());
+                    String RES = this.doMath(AP.getNumber1(), AP.getOperation(), AP.getNumber2());
+                    this.UserInterface.addEndedProcess(AB.getBatchID(), AP.getProgramID(), this.OPformated, RES);
                 }
             }
         }
+        this.UserInterface.setSTATUS("FINISHED");
         JOptionPane.showMessageDialog(this.UserInterface, "The simulation has ended!");
+    }
+    
+    private void updatePendingProcesses(Batch ActualBatch){
+        int rc = this.UserInterface.model2.getRowCount()-1;
+        
+        for(int j = rc; j >= 0; j--){
+            this.UserInterface.model2.removeRow(j);
+        }
+        
+        for(int i = 0; i < ActualBatch.getNumberOfProcesses() ; i++){
+            this.UserInterface.addBatchProcess(ActualBatch.GET(i).getProgramID(), ActualBatch.GET(i).getMETime(), ActualBatch.GET(i).getTLTime());
+        }
     }
     
     private String doMath(String OP1, String OPM, String OP2){

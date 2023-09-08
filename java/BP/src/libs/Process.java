@@ -12,6 +12,7 @@ public class Process {
     
     String ProgrammerName, Operation, ProgramID, Number1, Number2;
     int METime;
+    int TLTime;
     
     public Process(String ProgName, String num1, String num2, String Op, int time, String PID){
         this.ProgrammerName = ProgName;
@@ -20,6 +21,8 @@ public class Process {
         this.Operation = Op;
         this.METime = time;
         this.ProgramID = PID;
+        
+        this.TLTime = 0;
     }
     
     public String getNumber1(){
@@ -34,6 +37,13 @@ public class Process {
     }
     public void setNumber2(String x){
         this.Number2 = x;
+    }
+    
+    public int getTLTime(){
+        return this.TLTime;
+    }
+    public void setTLTime(int x){
+        this.TLTime = x;
     }
     
     public int getMETime(){
