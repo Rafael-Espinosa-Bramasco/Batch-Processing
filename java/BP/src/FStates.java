@@ -1,3 +1,8 @@
+
+import java.util.ArrayList;
+
+import libs.FS_Process;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -14,8 +19,27 @@ public class FStates extends javax.swing.JFrame {
      */
     public FStates() {
         initComponents();
+        
+        this.NewProcesses = new ArrayList<>();
+        this.PreparatedProcesses = new ArrayList<>();
+        this.BlockedProcesses = new ArrayList<>();
+        this.FinishedProcesses = new ArrayList<>();
+        
+        this.GlobalCounter = 0;
     }
 
+    // Variables
+    
+        // Array Lists
+        ArrayList<FS_Process> NewProcesses;
+        ArrayList<FS_Process> PreparatedProcesses;
+        ArrayList<FS_Process> BlockedProcesses;
+        ArrayList<FS_Process> FinishedProcesses;
+    
+        // Simple Variables
+        FS_Process ExecutionProcess;    // Asigned on program execution
+        int GlobalCounter;
+        
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -26,15 +50,15 @@ public class FStates extends javax.swing.JFrame {
     private void initComponents() {
 
         Table = new javax.swing.JScrollPane();
-        BETable = new javax.swing.JTable();
+        FinishedState = new javax.swing.JTable();
         Table1 = new javax.swing.JScrollPane();
-        BETable1 = new javax.swing.JTable();
+        NewState = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         Table2 = new javax.swing.JScrollPane();
-        BETable2 = new javax.swing.JTable();
+        PreparatedState = new javax.swing.JTable();
         Table3 = new javax.swing.JScrollPane();
-        BETable3 = new javax.swing.JTable();
+        BlockedState = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
@@ -43,37 +67,43 @@ public class FStates extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
+        Program_ID = new javax.swing.JLabel();
+        Operation = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
+        TE_Counter = new javax.swing.JLabel();
+        TL_Counter = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
+        GC_Counter = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        TME_Counter = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Five States Simulation");
+        setResizable(false);
 
-        BETable.setModel(new javax.swing.table.DefaultTableModel(
+        FinishedState.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
             },
             new String [] {
-                "Batch ID" ,"Program ID", "Operation","Result"
+                "Program ID", "Operation", "Result"
             }
         ));
-        BETable.setFocusable(false);
-        BETable.setShowGrid(true);
-        Table.setViewportView(BETable);
+        FinishedState.setFocusable(false);
+        FinishedState.setShowGrid(true);
+        Table.setViewportView(FinishedState);
 
-        BETable1.setModel(new javax.swing.table.DefaultTableModel(
+        NewState.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
             },
             new String [] {
-                "Batch ID" ,"Program ID", "Operation","Result"
+                "Program ID", "Operation", "MET"
             }
         ));
-        BETable1.setFocusable(false);
-        BETable1.setShowGrid(true);
-        Table1.setViewportView(BETable1);
+        NewState.setFocusable(false);
+        NewState.setShowGrid(true);
+        Table1.setViewportView(NewState);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel1.setText("New");
@@ -81,27 +111,27 @@ public class FStates extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setText("Finished");
 
-        BETable2.setModel(new javax.swing.table.DefaultTableModel(
+        PreparatedState.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
             },
             new String [] {
-                "Batch ID" ,"Program ID", "Operation","Result"
+                "Program ID", "MET", "RT"
             }
         ));
-        BETable2.setFocusable(false);
-        BETable2.setShowGrid(true);
-        Table2.setViewportView(BETable2);
+        PreparatedState.setFocusable(false);
+        PreparatedState.setShowGrid(true);
+        Table2.setViewportView(PreparatedState);
 
-        BETable3.setModel(new javax.swing.table.DefaultTableModel(
+        BlockedState.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
             },
             new String [] {
-                "Batch ID" ,"Program ID", "Operation","Result"
+                "Program ID", "Blocked Elapsed Time"
             }
         ));
-        BETable3.setFocusable(false);
-        BETable3.setShowGrid(true);
-        Table3.setViewportView(BETable3);
+        BlockedState.setFocusable(false);
+        BlockedState.setShowGrid(true);
+        Table3.setViewportView(BlockedState);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel3.setText("Listos");
@@ -122,21 +152,30 @@ public class FStates extends javax.swing.JFrame {
 
         jLabel10.setText("Time left:");
 
-        jLabel11.setText("0");
+        Program_ID.setText("0");
 
-        jLabel12.setText("Operation");
+        Operation.setText("Operation");
 
-        jLabel13.setText("0 seconds");
+        jLabel13.setText("Seconds");
 
-        jLabel14.setText("0 seconds");
+        TE_Counter.setText("0");
 
-        jLabel15.setText("0 seconds");
+        TL_Counter.setText("0");
 
         jLabel16.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel16.setText("Global Time: ");
 
-        jLabel17.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel17.setText("0 Seconds");
+        GC_Counter.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        GC_Counter.setText("0");
+
+        jLabel18.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel18.setText("Seconds");
+
+        jLabel17.setText("Seconds");
+
+        jLabel19.setText("Seconds");
+
+        TME_Counter.setText("0");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -150,39 +189,50 @@ public class FStates extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(Table2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(Table3, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(35, 35, 35)
-                                    .addComponent(jLabel5))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel9)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel14))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel15)))))
+                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(TL_Counter)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel19))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addGap(35, 35, 35)
+                                            .addComponent(jLabel5))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                                        .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(TME_Counter)
+                                                        .addGap(15, 15, 15))
+                                                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                    .addComponent(Program_ID, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(Operation, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jLabel9)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(TE_Counter)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jLabel17))))
+                                    .addComponent(Table2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Table3, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(Table, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel16)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel17)))
-                .addContainerGap())
+                        .addComponent(GC_Counter)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel18)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(148, 148, 148)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -199,7 +249,8 @@ public class FStates extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel16)
-                    .addComponent(jLabel17))
+                    .addComponent(GC_Counter)
+                    .addComponent(jLabel18))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -221,28 +272,32 @@ public class FStates extends javax.swing.JFrame {
                                 .addGap(11, 11, 11)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel6)
-                                    .addComponent(jLabel11))
+                                    .addComponent(Program_ID))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel7)
-                                    .addComponent(jLabel12))
+                                    .addComponent(Operation))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel8)
-                                    .addComponent(jLabel13))
-                                .addGap(18, 18, 18)
+                                    .addComponent(jLabel13)
+                                    .addComponent(TME_Counter))
+                                .addGap(26, 26, 26)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel9)
-                                    .addComponent(jLabel14))
+                                    .addComponent(TE_Counter)
+                                    .addComponent(jLabel17))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel10)
-                                    .addComponent(jLabel15))))
-                        .addGap(3, 3, 3)))
-                .addGap(7, 7, 7))
+                                    .addComponent(TL_Counter)
+                                    .addComponent(jLabel19))))
+                        .addGap(0, 3, Short.MAX_VALUE)))
+                .addContainerGap(7, Short.MAX_VALUE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     /**
@@ -281,23 +336,27 @@ public class FStates extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable BETable;
-    private javax.swing.JTable BETable1;
-    private javax.swing.JTable BETable2;
-    private javax.swing.JTable BETable3;
+    private javax.swing.JTable BlockedState;
+    private javax.swing.JTable FinishedState;
+    private javax.swing.JLabel GC_Counter;
+    private javax.swing.JTable NewState;
+    private javax.swing.JLabel Operation;
+    private javax.swing.JTable PreparatedState;
+    private javax.swing.JLabel Program_ID;
+    private javax.swing.JLabel TE_Counter;
+    private javax.swing.JLabel TL_Counter;
+    private javax.swing.JLabel TME_Counter;
     private javax.swing.JScrollPane Table;
     private javax.swing.JScrollPane Table1;
     private javax.swing.JScrollPane Table2;
     private javax.swing.JScrollPane Table3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

@@ -20,7 +20,7 @@ public class BPMW extends javax.swing.JFrame {
     }
     
     BPM bpMode = new BPM();
-    FStates fs = new FStates();
+    ProcessInput pi = new ProcessInput();
     
 
     /**
@@ -125,11 +125,11 @@ public class BPMW extends javax.swing.JFrame {
 
     private void BTM_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BTM_btnActionPerformed
         // TODO add your handling code here:
-        if(this.fs.isShowing()){
+        if(this.pi.isShowing()){
             // Cannot open another instance for this window
             JOptionPane.showMessageDialog(null, "Five States Mode window is already active!");
         }else {
-            this.fs.setVisible(true);
+            this.pi.setVisible(true);
             this.dispose();
         }
     }//GEN-LAST:event_BTM_btnActionPerformed
