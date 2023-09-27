@@ -1,3 +1,8 @@
+
+import java.util.ArrayList;
+
+import libs.FS_Process;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -14,8 +19,27 @@ public class FStates extends javax.swing.JFrame {
      */
     public FStates() {
         initComponents();
+        
+        this.NewProcesses = new ArrayList<>();
+        this.PreparatedProcesses = new ArrayList<>();
+        this.BlockedProcesses = new ArrayList<>();
+        this.FinishedProcesses = new ArrayList<>();
+        
+        this.GlobalCounter = 0;
     }
 
+    // Variables
+    
+        // Array Lists
+        ArrayList<FS_Process> NewProcesses;
+        ArrayList<FS_Process> PreparatedProcesses;
+        ArrayList<FS_Process> BlockedProcesses;
+        ArrayList<FS_Process> FinishedProcesses;
+    
+        // Simple Variables
+        FS_Process ExecutionProcess;    // Asigned on program execution
+        int GlobalCounter;
+        
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
