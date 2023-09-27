@@ -13,6 +13,7 @@ public class FS_Process {
     private String ID, OP1, OP2;
     private int MET, RT, ET;
     private char OP;
+    double Result;
     
     int ArriveTime;         // When the process is on the Preparated State (The function 'arrive' is called)
     int EndTime;            // When the process is finished (The function 'finish' is called)
@@ -47,6 +48,29 @@ public class FS_Process {
     }
     
     // Methods
+    private void setResult(double a, char op, double b){
+        switch(op){
+            case '+' -> {
+                Result = a + b;
+            }
+            case '-' -> {
+                Result = a - b;
+            }
+            case '*' -> {
+                Result = a * b;
+            }
+            case '/' -> {
+                Result = a / b;
+            }
+            case '%' -> {
+                Result = a % b;
+            }
+            case 'P' -> {
+                Result = Math.pow(a, b);
+            }
+        }
+    }
+    
     public void arrive(int t){
         if(!isArrived){
             ArriveTime = t;
@@ -59,6 +83,7 @@ public class FS_Process {
             EndTime = t;
             isEnded = true;
             
+            this.setResult(Double.parseDouble(OP1), OP, Double.parseDouble(OP2));
             ReturnTime = WaitTime + ServiceTime;
         }
     }
@@ -70,6 +95,10 @@ public class FS_Process {
     }
 
     // Getters
+    public double getResult(){
+        return Result;
+    }
+    
     public int getReturnTime(){
         return ReturnTime;
     }
