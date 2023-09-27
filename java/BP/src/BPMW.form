@@ -110,8 +110,11 @@
         </Component>
         <Component class="javax.swing.JButton" name="BTM_btn">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Batch Threding Mode"/>
+            <Property name="text" type="java.lang.String" value="Five States Mode"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BTM_btnActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

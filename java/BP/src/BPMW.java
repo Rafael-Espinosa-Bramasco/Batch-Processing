@@ -20,6 +20,7 @@ public class BPMW extends javax.swing.JFrame {
     }
     
     BPM bpMode = new BPM();
+    FStates fs = new FStates();
     
 
     /**
@@ -56,7 +57,12 @@ public class BPMW extends javax.swing.JFrame {
             }
         });
 
-        BTM_btn.setText("Batch Threding Mode");
+        BTM_btn.setText("Five States Mode");
+        BTM_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BTM_btnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout PanelMWLayout = new javax.swing.GroupLayout(PanelMW);
         PanelMW.setLayout(PanelMWLayout);
@@ -116,6 +122,17 @@ public class BPMW extends javax.swing.JFrame {
             this.dispose();
         }
     }//GEN-LAST:event_BPM_btnActionPerformed
+
+    private void BTM_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BTM_btnActionPerformed
+        // TODO add your handling code here:
+        if(this.fs.isShowing()){
+            // Cannot open another instance for this window
+            JOptionPane.showMessageDialog(null, "Five States Mode window is already active!");
+        }else {
+            this.fs.setVisible(true);
+            this.dispose();
+        }
+    }//GEN-LAST:event_BTM_btnActionPerformed
 
     /**
      * @param args the command line arguments
