@@ -19,8 +19,9 @@ public class FS_Process {
     int EndTime;            // When the process is finished (The function 'finish' is called)
     int ReturnTime;         // When the process is finished, calculate the time (inside the function 'finish')
     int AnswerTime;         // Time between states 'new' and 'preparated'
-    int WaitTime;           // Blocked Time
+    int WaitTime;           // XD 2
     int ServiceTime;        // XD
+    int BlockedTime;        // XD 3
     
     boolean isArrived;
     boolean isEnded;
@@ -89,7 +90,6 @@ public class FS_Process {
     }
     
     public void oneSecPassed(){
-        MET--;
         RT--;
         ET++;
     }
@@ -140,6 +140,10 @@ public class FS_Process {
     }
     
     // Setters
+    public void setBlockedTime(int t){
+        BlockedTime = t;
+    }
+    
     public void setID(String newID){
         ID = newID;
     }
