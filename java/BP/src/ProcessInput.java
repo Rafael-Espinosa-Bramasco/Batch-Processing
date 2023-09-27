@@ -1,5 +1,7 @@
 
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import libs.FS_Process;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -8,7 +10,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author rafael
+ * @author Rafael & Andrea
  */
 public class ProcessInput extends javax.swing.JFrame {
 
@@ -19,6 +21,9 @@ public class ProcessInput extends javax.swing.JFrame {
         initComponents();
     }
     
+    //Variables
+    ArrayList<FS_Process> Processes = new ArrayList();
+    //Screens variables
     FStates fs = new FStates();
 
     /**
@@ -78,14 +83,88 @@ public class ProcessInput extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private boolean validateNP(){
+        try{
+            //Validate that the field is not clear
+            if(this.NumberOfProcesses.getText().compareTo("") == 0)
+            {
+                JOptionPane.showMessageDialog(null, "You must fill the field");
+                return false;
+            }
+            //Validate that the number is up 0
+            else if(Integer.parseInt(this.NumberOfProcesses.getText())<1)
+            {
+                JOptionPane.showMessageDialog(null, "The number of process need to be more than 0");
+                return false;
+            }
+        //Validate that the user do not enter a no number character
+        }catch(NumberFormatException ex)
+        {
+            JOptionPane.showMessageDialog(null, "The value must be an integer value");
+                return false;
+        }
+
+        return true;
+    }
+    
+    private void randomizeProcesses(){
+        
+        // Programmer name isnt necessary
+        int OP1;
+        int OP2;
+        char OP = ' ';
+        int MET;
+        String PID;
+        int PIDCount = 0;
+        
+        int numberOfProcesses = Integer.parseInt(this.NumberOfProcesses.getText());
+        
+        FS_Process newProcess;
+        
+        while(numberOfProcesses > 0){
+            OP1 = (int) (Math.random() * 100);
+            
+            switch((int) (Math.random() *10+1)){
+                case 1, 2 -> {OP = '+';}
+                case 3, 4 -> {OP = '-';}
+                case 5, 6 -> {OP = 'x';}
+                case 7, 8 -> {OP = '/';}
+                case 9, 10 -> {OP = '%';}
+            }
+            
+            MET = (int) (7 + Math.random() * (18 - 7));
+            
+            if(OP == '/' || OP == '%'){
+                OP2 = (int) (Math.random() *100+1);
+            }else{
+                OP2 = (int) (Math.random() *100+0);
+            }
+
+            PID = "P".concat(String.valueOf(PIDCount)).concat("ID");
+            PIDCount++;
+            
+            newProcess = new FS_Process(PID,MET,String.valueOf(OP1),OP,String.valueOf(OP2));
+            this.Processes.add(newProcess);
+            
+            numberOfProcesses--;
+        }
+    }
+    
+    //Action Events:
+    
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        if(this.fs.isShowing()){
-            // Cannot open another instance for this window
-            JOptionPane.showMessageDialog(null, "Five States Mode window is already active!");
-        }else {
-            this.fs.setVisible(true);
-            this.dispose();
+        if(validateNP()){
+            if(this.fs.isShowing()){
+                // Cannot open another instance for this window
+                JOptionPane.showMessageDialog(null, "Five States Mode window is already active!");
+            }else {
+                this.randomizeProcesses();//nota para rafa despues la borras: en este punto los procesos estan guardados
+                                          //en un array llamado Processes pero ya no supe como enviar el array a la otra
+                                          //pantalla
+                this.fs.setVisible(true);
+                this.dispose();
+            }
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

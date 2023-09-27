@@ -1,0 +1,5 @@
+Ya acabé de programar parte de lo necesario en el ProcessInput
+Esta bloqueado para que necesites ingresar un numero mayor a 0
+Y tambien crea ya los procesos de forma random, todos los procesos los guardo en una variable que se llama Processes (te deje una nota en el codigo de en que momento ya está creado ese arreglo)
+
+Lo que no supe fue como enviar el arreglo a la otra pantalla, intente guiarme por tu codigo del otro modo pero no entendí esa parte XD ademas supongo que ahí es donde se tiene que meter lo de hilos así que si me puedes ayudar a agregar eso por favor
