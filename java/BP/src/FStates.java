@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
 
 import libs.FS_Process;
 
@@ -20,25 +21,112 @@ public class FStates extends javax.swing.JFrame {
     public FStates() {
         initComponents();
         
-        this.NewProcesses = new ArrayList<>();
-        this.PreparatedProcesses = new ArrayList<>();
-        this.BlockedProcesses = new ArrayList<>();
-        this.FinishedProcesses = new ArrayList<>();
-        
-        this.GlobalCounter = 0;
+        newModel = (DefaultTableModel) this.NewState.getModel();
+        preModel = (DefaultTableModel) this.PreparatedState.getModel();
+        bloModel = (DefaultTableModel) this.BlockedState.getModel();
+        finModel = (DefaultTableModel) this.FinishedState.getModel();
+    }
+    
+    DefaultTableModel newModel;
+    DefaultTableModel preModel;
+    DefaultTableModel bloModel;
+    DefaultTableModel finModel;
+    
+    FSThread masterThread;
+    
+    public void setGlobalCounter(String _GC){
+        this.GC_Counter.setText(_GC);
     }
 
-    // Variables
+    public void setMasterThread(FSThread _masterThread){
+        this.masterThread = _masterThread;
+    }
     
-        // Array Lists
-        ArrayList<FS_Process> NewProcesses;
-        ArrayList<FS_Process> PreparatedProcesses;
-        ArrayList<FS_Process> BlockedProcesses;
-        ArrayList<FS_Process> FinishedProcesses;
+    public void setPID(String PID){
+        this.Program_ID.setText(PID);
+    }
     
-        // Simple Variables
-        FS_Process ExecutionProcess;    // Asigned on program execution
-        int GlobalCounter;
+    public void setOP(String OP){
+        this.Operation.setText(OP);
+    }
+    
+    public void setMET(String MET){
+        this.MET_Counter.setText(MET);
+    }
+    
+    public void setTE(String TE){
+        this.TE_Counter.setText(TE);
+    }
+    
+    public void setTL(String TL){
+        this.TL_Counter.setText(TL);
+    }
+    
+    public void setStatus(String status){
+        this.status.setText(status);
+    }
+    
+    public void updateAll(ArrayList<FS_Process> _News,ArrayList<FS_Process>  _Prep,ArrayList<FS_Process>  _Block,ArrayList<FS_Process>  _Finish){
+        this.updateNews(_News);
+        this.updatePrep(_Prep);
+        this.updateBloc(_Block);
+        this.updateFini(_Finish);
+    }
+    
+    public void clearTable(char table){
+        switch(table){
+            case 'N' -> {
+                while(this.newModel.getRowCount() > 0){
+                    this.newModel.removeRow(0);
+                }
+            }
+            case 'P' -> {
+                while(this.preModel.getRowCount() > 0){
+                    this.preModel.removeRow(0);
+                }
+            }
+            case 'B' -> {
+                while(this.bloModel.getRowCount() > 0){
+                    this.bloModel.removeRow(0);
+                }
+            }
+            case 'F' -> {
+                if(this.finModel.getRowCount() > 0){
+                    while(this.finModel.getRowCount() > 0){
+                        this.finModel.removeRow(0);
+                    }
+                }
+            }
+        }
+    }
+    public void updateNews(ArrayList<FS_Process> _News){
+        clearTable('N');
+        
+        for(int i = 0; i < _News.size() ; i++){
+            this.newModel.addRow(new Object[]{_News.get(i).getID(), _News.get(i).getFullOperation(), _News.get(i).getMET()});
+        }
+    }
+    public void updatePrep(ArrayList<FS_Process> _Prep){
+        clearTable('P');
+        
+        for(int i = 0; i < _Prep.size() ; i++){
+            this.preModel.addRow(new Object[]{_Prep.get(i).getID(), _Prep.get(i).getMET(), _Prep.get(i).getRT()});
+        }
+    }
+    public void updateBloc(ArrayList<FS_Process> _Block){
+        clearTable('B');
+        
+        for(int i = 0; i < _Block.size() ; i++){
+            this.bloModel.addRow(new Object[]{_Block.get(i).getID(), _Block.get(i).getBlockedTime()});
+        }
+    }
+    public void updateFini(ArrayList<FS_Process> _Finish){
+        clearTable('F');
+        
+        for(int i = 0; i < _Finish.size() ; i++){
+            this.finModel.addRow(new Object[]{_Finish.get(i).getID(), _Finish.get(i).getFullOperation(), _Finish.get(i).getResult()});
+        }
+    }
         
     /**
      * This method is called from within the constructor to initialize the form.
@@ -77,11 +165,18 @@ public class FStates extends javax.swing.JFrame {
         jLabel18 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
-        TME_Counter = new javax.swing.JLabel();
+        MET_Counter = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        status = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Five States Simulation");
         setResizable(false);
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                formKeyTyped(evt);
+            }
+        });
 
         FinishedState.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -134,10 +229,10 @@ public class FStates extends javax.swing.JFrame {
         Table3.setViewportView(BlockedState);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel3.setText("Listos");
+        jLabel3.setText("Preparated");
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel4.setText("Bloqueados");
+        jLabel4.setText("Blocked");
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel5.setText("Ejecución");
@@ -146,7 +241,7 @@ public class FStates extends javax.swing.JFrame {
 
         jLabel7.setText("Operation:");
 
-        jLabel8.setText("TME: ");
+        jLabel8.setText("MET: ");
 
         jLabel9.setText("Time elapsed:");
 
@@ -175,7 +270,13 @@ public class FStates extends javax.swing.JFrame {
 
         jLabel19.setText("Seconds");
 
-        TME_Counter.setText("0");
+        MET_Counter.setText("0");
+
+        jLabel20.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel20.setText("Status: ");
+
+        status.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        status.setText("On Process");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -207,7 +308,7 @@ public class FStates extends javax.swing.JFrame {
                                                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                                         .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                        .addComponent(TME_Counter)
+                                                        .addComponent(MET_Counter)
                                                         .addGap(15, 15, 15))
                                                     .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING))
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -231,14 +332,18 @@ public class FStates extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(GC_Counter)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel18)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jLabel18)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel20)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(status)))
+                .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGap(148, 148, 148)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(214, 214, 214)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(149, 149, 149)
+                .addGap(191, 191, 191)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(133, 133, 133)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel2)
@@ -250,7 +355,9 @@ public class FStates extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel16)
                     .addComponent(GC_Counter)
-                    .addComponent(jLabel18))
+                    .addComponent(jLabel18)
+                    .addComponent(jLabel20)
+                    .addComponent(status))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -281,7 +388,7 @@ public class FStates extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel8)
                                     .addComponent(jLabel13)
-                                    .addComponent(TME_Counter))
+                                    .addComponent(MET_Counter))
                                 .addGap(26, 26, 26)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel9)
@@ -292,13 +399,27 @@ public class FStates extends javax.swing.JFrame {
                                     .addComponent(jLabel10)
                                     .addComponent(TL_Counter)
                                     .addComponent(jLabel19))))
-                        .addGap(0, 3, Short.MAX_VALUE)))
-                .addContainerGap(7, Short.MAX_VALUE))
+                        .addGap(3, 3, 3)))
+                .addGap(7, 7, 7))
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyTyped
+        // TODO add your handling code here:
+        switch(evt.getKeyChar()){
+            case 'i', 'I' -> {}
+            case 'e', 'E' -> {}
+            case 'p', 'P' -> {
+                this.masterThread.pauseThread();
+            }
+            case 'c', 'C' -> {
+                this.masterThread.continueThread();
+            }
+        }
+    }//GEN-LAST:event_formKeyTyped
 
     /**
      * @param args the command line arguments
@@ -339,13 +460,13 @@ public class FStates extends javax.swing.JFrame {
     private javax.swing.JTable BlockedState;
     private javax.swing.JTable FinishedState;
     private javax.swing.JLabel GC_Counter;
+    private javax.swing.JLabel MET_Counter;
     private javax.swing.JTable NewState;
     private javax.swing.JLabel Operation;
     private javax.swing.JTable PreparatedState;
     private javax.swing.JLabel Program_ID;
     private javax.swing.JLabel TE_Counter;
     private javax.swing.JLabel TL_Counter;
-    private javax.swing.JLabel TME_Counter;
     private javax.swing.JScrollPane Table;
     private javax.swing.JScrollPane Table1;
     private javax.swing.JScrollPane Table2;
@@ -358,6 +479,7 @@ public class FStates extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -365,5 +487,6 @@ public class FStates extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel status;
     // End of variables declaration//GEN-END:variables
 }

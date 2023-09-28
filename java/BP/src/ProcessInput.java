@@ -1,5 +1,7 @@
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import libs.FS_Process;
 
@@ -124,12 +126,13 @@ public class ProcessInput extends javax.swing.JFrame {
         while(numberOfProcesses > 0){
             OP1 = (int) (Math.random() * 100);
             
-            switch((int) (Math.random() *10+1)){
+            switch((int) (Math.random() *12+1)){
                 case 1, 2 -> {OP = '+';}
                 case 3, 4 -> {OP = '-';}
                 case 5, 6 -> {OP = 'x';}
                 case 7, 8 -> {OP = '/';}
                 case 9, 10 -> {OP = '%';}
+                case 11, 12 -> {OP = 'P';}
             }
             
             MET = (int) (7 + Math.random() * (18 - 7));
@@ -163,6 +166,12 @@ public class ProcessInput extends javax.swing.JFrame {
                                           //en un array llamado Processes pero ya no supe como enviar el array a la otra
                                           //pantalla
                 this.fs.setVisible(true);
+                
+                FSThread controllerThread = new FSThread(this.fs,this.Processes);
+                controllerThread.start();
+                
+                this.fs.setMasterThread(controllerThread);
+                
                 this.dispose();
             }
         }

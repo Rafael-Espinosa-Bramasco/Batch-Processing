@@ -57,7 +57,7 @@ public class FS_Process {
             case '-' -> {
                 Result = a - b;
             }
-            case '*' -> {
+            case 'x' -> {
                 Result = a * b;
             }
             case '/' -> {
@@ -99,6 +99,10 @@ public class FS_Process {
         return Result;
     }
     
+    public int getBlockedTime(){
+        return BlockedTime;
+    }
+    
     public int getReturnTime(){
         return ReturnTime;
     }
@@ -137,6 +141,10 @@ public class FS_Process {
     
     public String getOP2(){
         return OP2;
+    }
+    
+    public String getFullOperation(){
+        return OP1.concat(" ").concat(Character.toString(OP)).concat(" ").concat(OP2);
     }
     
     // Setters
@@ -183,5 +191,13 @@ public class FS_Process {
     
     public void decRT(){
         RT--;
+    }
+    
+    public void incBT(){
+        BlockedTime++;
+    }
+    
+    public void decBT(){
+        BlockedTime--;
     }
 }
