@@ -134,6 +134,14 @@ public class FS_Process {
         return EndTime;
     }
     
+    public int getWaitTime(){
+        return WaitTime;
+    }
+    
+    public int getServiceTime(){
+        return ServiceTime;
+    }
+    
     public String getID(){
         return ID;
     }

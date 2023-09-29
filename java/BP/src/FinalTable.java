@@ -1,3 +1,7 @@
+import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
+import libs.FS_Process;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -14,6 +18,22 @@ public class FinalTable extends javax.swing.JFrame {
      */
     public FinalTable() {
         initComponents();
+    }
+    
+    //Variables
+    //ArrayList<FS_Process> Processes;
+    
+    
+    //Funciones
+    public void setData(ArrayList<FS_Process> data)
+    {
+        //Processes = data;
+        
+        DefaultTableModel Model = (DefaultTableModel) this.ResultsTable.getModel();
+        
+        for(int i = 0; i < data.size() ; i++){
+            Model.addRow(new Object[]{data.get(i).getID(),data.get(i).getMET(), data.get(i).getFullOperation(), (data.get(i).getIsError()) ? "<ERROR>" : data.get(i).getResult(),data.get(i).getArriveTime(),data.get(i).getEndTime(),data.get(i).getReturnTime(),data.get(i).getAnswerTime(),data.get(i).getWaitTime(),data.get(i).getServiceTime()});
+        }
     }
 
     /**
@@ -36,7 +56,7 @@ public class FinalTable extends javax.swing.JFrame {
             new Object [][] {
             },
             new String [] {
-                "Progam ID", "Operation", "MET", "RT", "Result", ""
+                "Progam ID", "MET", "Operation", "Result", "ArriveTime", "EndTime", "ReturnTime", "AnswerTime", "WaitTime", "ServiceTime"
             }
         ));
         jScrollPane1.setViewportView(ResultsTable);

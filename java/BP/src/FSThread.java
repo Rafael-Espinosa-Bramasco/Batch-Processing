@@ -167,6 +167,7 @@ public class FSThread extends Thread {
                     isError = false;
                     
                     this.ExecutionProcess.setError();
+                    this.ExecutionProcess.finish(GC);
                     
                     this.FinishedProcesses.add(ExecutionProcess);
                     
@@ -215,6 +216,7 @@ public class FSThread extends Thread {
                     isError = false;
                     
                     this.ExecutionProcess.setError();
+                    this.ExecutionProcess.finish(GC);
                     
                     this.FinishedProcesses.add(ExecutionProcess);
                     
@@ -267,6 +269,10 @@ public class FSThread extends Thread {
         this.GUI.updateAll(NewProcesses, PreparatedProcesses, BlockedProcesses, FinishedProcesses);
         
         this.GUI.setStatus("Finished");
+        
+        FinalTable ft = new FinalTable();
+        ft.setData(FinishedProcesses);
+        ft.setVisible(true);
         
         JOptionPane.showMessageDialog(GUI, "Processes Finished!");
     }
