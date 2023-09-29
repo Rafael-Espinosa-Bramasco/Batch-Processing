@@ -48,7 +48,7 @@ public class FinalTable extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         ResultsTable = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Five States Simulation Results");
         setResizable(false);
 
@@ -59,6 +59,8 @@ public class FinalTable extends javax.swing.JFrame {
                 "Progam ID", "MET", "Operation", "Result", "ArriveTime", "EndTime", "ReturnTime", "AnswerTime", "WaitTime", "ServiceTime"
             }
         ));
+        ResultsTable.setFocusable(false);
+        ResultsTable.setShowGrid(true);
         jScrollPane1.setViewportView(ResultsTable);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

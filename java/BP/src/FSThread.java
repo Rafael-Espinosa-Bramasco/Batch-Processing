@@ -274,6 +274,6 @@ public class FSThread extends Thread {
         ft.setData(FinishedProcesses);
         ft.setVisible(true);
         
-        JOptionPane.showMessageDialog(GUI, "Processes Finished!");
+        JOptionPane.showMessageDialog(ft, "Processes Finished!");
     }
 }
