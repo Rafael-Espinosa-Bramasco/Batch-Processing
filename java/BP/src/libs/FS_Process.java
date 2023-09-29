@@ -25,6 +25,15 @@ public class FS_Process {
     
     boolean isArrived;
     boolean isEnded;
+    boolean isError;
+    
+    public void incServiceTime(){
+        this.ServiceTime++;
+    }
+    
+    public void incAnswerTime(){
+        this.AnswerTime++;
+    }
     
     public FS_Process(String _ID, int _MET, String _OP1, char _OP, String _OP2){
         // Init. Vars
@@ -46,6 +55,7 @@ public class FS_Process {
         
         isArrived = false;
         isEnded = false;
+        isError = false;
     }
     
     // Methods
@@ -85,6 +95,7 @@ public class FS_Process {
             isEnded = true;
             
             this.setResult(Double.parseDouble(OP1), OP, Double.parseDouble(OP2));
+            WaitTime = AnswerTime;
             ReturnTime = WaitTime + ServiceTime;
         }
     }
@@ -95,6 +106,10 @@ public class FS_Process {
     }
 
     // Getters
+    public boolean getIsError(){
+        return isError;
+    }
+    
     public double getResult(){
         return Result;
     }
@@ -148,6 +163,10 @@ public class FS_Process {
     }
     
     // Setters
+    public void setError(){
+        isError = true;
+    }
+    
     public void setBlockedTime(int t){
         BlockedTime = t;
     }
