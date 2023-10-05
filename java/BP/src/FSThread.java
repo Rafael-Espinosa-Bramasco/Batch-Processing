@@ -89,13 +89,8 @@ public class FSThread extends Thread {
         // Chek if some process has finished
         for(int i = 0; i < this.BlockedProcesses.size() ; i++){
             if(this.BlockedProcesses.get(i).getBlockedTime() < 0){
-                if(this.PreparatedProcesses.size() < 3){
-                    this.PreparatedProcesses.add(this.BlockedProcesses.get(i));
-                    this.BlockedProcesses.remove(i);
-                }else{
-                    this.NewProcesses.add(this.BlockedProcesses.get(i));
-                    this.BlockedProcesses.remove(i);
-                }
+                this.PreparatedProcesses.add(this.BlockedProcesses.get(i));
+                this.BlockedProcesses.remove(i);
                 i--;
             }
         }
@@ -112,26 +107,39 @@ public class FSThread extends Thread {
         int TE = 0;
         int TL = 0;
         int GC = 0;
+        int ProcessesInMemory = 0;
         
         while(this.PreparatedProcesses.size() < 3 && !this.NewProcesses.isEmpty()){
             // Fill the first 3 new processes
             this.PreparatedProcesses.add(this.NewProcesses.get(0));
             this.NewProcesses.remove(0);
+            ProcessesInMemory++;
         }
         
         this.GUI.updateAll(NewProcesses, PreparatedProcesses, BlockedProcesses, FinishedProcesses);
         
         while(!this.PreparatedProcesses.isEmpty() || !this.NewProcesses.isEmpty() || !this.BlockedProcesses.isEmpty()){
             // assign the actual process
-            this.ExecutionProcess = this.PreparatedProcesses.get(0);
-            this.PreparatedProcesses.remove(0);
-            
-            this.ExecutionProcess.arrive(GC);
-            
-            // Take another process if possible
-            if(!this.NewProcesses.isEmpty()){
-                this.PreparatedProcesses.add(this.NewProcesses.get(0));
-                this.NewProcesses.remove(0);
+            if(ProcessesInMemory < 3){
+                
+                this.ExecutionProcess = this.PreparatedProcesses.get(0);
+                this.PreparatedProcesses.remove(0);
+
+                this.ExecutionProcess.arrive(GC);
+                
+                // Take another process if possible
+                if(!this.NewProcesses.isEmpty()){
+                    this.PreparatedProcesses.add(this.NewProcesses.get(0));
+                    this.NewProcesses.remove(0);
+                    ProcessesInMemory++;
+                }
+            }else{
+                if(this.ExecutionProcess == null){
+                    this.ExecutionProcess = this.PreparatedProcesses.get(0);
+                    this.PreparatedProcesses.remove(0);
+
+                    this.ExecutionProcess.arrive(GC);
+                }
             }
             
             this.GUI.updateAll(NewProcesses, PreparatedProcesses, BlockedProcesses, FinishedProcesses);
@@ -170,6 +178,8 @@ public class FSThread extends Thread {
                     this.ExecutionProcess.finish(GC);
                     
                     this.FinishedProcesses.add(ExecutionProcess);
+                    
+                    ProcessesInMemory--;
                     
                     this.GUI.updateFini(FinishedProcesses);
                     
@@ -220,6 +230,8 @@ public class FSThread extends Thread {
                     
                     this.FinishedProcesses.add(ExecutionProcess);
                     
+                    ProcessesInMemory--;
+                    
                     this.GUI.updateFini(FinishedProcesses);
                     
                     this.ExecutionProcess = null;
@@ -228,7 +240,7 @@ public class FSThread extends Thread {
                 }
             }
             
-            while(!this.BlockedProcesses.isEmpty() && this.PreparatedProcesses.isEmpty() && this.NewProcesses.isEmpty() && this.ExecutionProcess == null){
+            while(!this.BlockedProcesses.isEmpty() && this.PreparatedProcesses.isEmpty() && ProcessesInMemory == 3 && this.ExecutionProcess == null){
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ex) {
@@ -247,9 +259,10 @@ public class FSThread extends Thread {
                 this.GUI.setTE("-.-");
             }
 
-            if(TL == 0 && !this.ExecutionProcess.getIsError()){
+            if(TL == 0 && !this.ExecutionProcess.getIsError() && this.ExecutionProcess != null){
                 this.ExecutionProcess.finish(GC);
                 this.FinishedProcesses.add(ExecutionProcess);
+                ProcessesInMemory--;
                 this.GUI.updateAll(NewProcesses, PreparatedProcesses, BlockedProcesses, FinishedProcesses);
             }
             
