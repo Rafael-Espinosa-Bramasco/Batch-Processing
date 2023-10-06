@@ -116,7 +116,8 @@ public class FSThread extends Thread {
             ProcessesInMemory++;
         }
         
-        this.GUI.updateAll(NewProcesses, PreparatedProcesses, BlockedProcesses, FinishedProcesses);
+        this.GUI.updateNews(NewProcesses);
+        this.GUI.updatePrep(PreparatedProcesses);
         
         while(!this.PreparatedProcesses.isEmpty() || !this.NewProcesses.isEmpty() || !this.BlockedProcesses.isEmpty()){
             // assign the actual process
@@ -132,17 +133,18 @@ public class FSThread extends Thread {
                     this.PreparatedProcesses.add(this.NewProcesses.get(0));
                     this.NewProcesses.remove(0);
                     ProcessesInMemory++;
+                    this.GUI.updateNews(NewProcesses);
                 }
+                this.GUI.updatePrep(PreparatedProcesses);
             }else{
                 if(this.ExecutionProcess == null){
                     this.ExecutionProcess = this.PreparatedProcesses.get(0);
                     this.PreparatedProcesses.remove(0);
 
                     this.ExecutionProcess.arrive(GC);
+                    this.GUI.updatePrep(PreparatedProcesses);
                 }
             }
-            
-            this.GUI.updateAll(NewProcesses, PreparatedProcesses, BlockedProcesses, FinishedProcesses);
             
             // Fill data of execution process
             this.GUI.setPID(this.ExecutionProcess.getID());
@@ -196,7 +198,8 @@ public class FSThread extends Thread {
                 
                 this.checkNews();
                 this.checkBlocked();
-                this.GUI.updateAll(NewProcesses, PreparatedProcesses, BlockedProcesses, FinishedProcesses);
+                this.GUI.updateBloc(BlockedProcesses);
+                this.GUI.updatePrep(PreparatedProcesses);
                 
                 TL--;
                 TE++;
@@ -248,7 +251,8 @@ public class FSThread extends Thread {
                 }
                 
                 this.checkBlocked();
-                this.GUI.updateAll(NewProcesses, PreparatedProcesses, BlockedProcesses, FinishedProcesses);
+
+                this.GUI.updateBloc(BlockedProcesses);
                 
                 this.GUI.setGlobalCounter(String.valueOf(++GC));
                 
@@ -263,7 +267,7 @@ public class FSThread extends Thread {
                 this.ExecutionProcess.finish(GC);
                 this.FinishedProcesses.add(ExecutionProcess);
                 ProcessesInMemory--;
-                this.GUI.updateAll(NewProcesses, PreparatedProcesses, BlockedProcesses, FinishedProcesses);
+                this.GUI.updateFini(FinishedProcesses);
             }
             
             try {
