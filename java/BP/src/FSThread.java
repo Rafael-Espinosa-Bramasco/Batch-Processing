@@ -280,6 +280,7 @@ public class FSThread extends Thread {
                     
                     break;
                 }
+                this.ExecutionProcess.decRT();
             }
             
             while(!this.BlockedProcesses.isEmpty() && this.PreparatedProcesses.isEmpty() && ProcessesInMemory == 3 && this.ExecutionProcess == null){
