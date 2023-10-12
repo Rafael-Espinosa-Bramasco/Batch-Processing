@@ -113,11 +113,6 @@ public class ProcessInput extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "The number of process need to be more than 0");
                 return false;
             }
-            else if(Integer.parseInt(this.input_quantum.getText())<1)
-            {
-                JOptionPane.showMessageDialog(null, "The quantum need to be more than 0");
-                return false;
-            }
         //Validate that the user do not enter a no number character
         }catch(NumberFormatException ex)
         {

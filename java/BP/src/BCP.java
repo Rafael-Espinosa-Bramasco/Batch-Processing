@@ -18,10 +18,13 @@ public class BCP extends javax.swing.JFrame {
      */
     public BCP() {
         initComponents();
+        this.MT = null;
     }
     
     //Variables
     //ArrayList<FS_Process> Processes;
+    
+    FSThread MT;
     
     
     //Funciones
@@ -32,8 +35,12 @@ public class BCP extends javax.swing.JFrame {
         DefaultTableModel Model = (DefaultTableModel) this.ResultsTable.getModel();
         
         for(int i = 0; i < data.size() ; i++){
-            Model.addRow(new Object[]{data.get(i).getID(),data.get(i).getState(), data.get(i).getFullOperation(), (data.get(i).getIsError()) ? "<ERROR>" : data.get(i).getResult(),data.get(i).getArriveTime(),data.get(i).getEndTime(),data.get(i).getReturnTime(),data.get(i).getWaitTime(),data.get(i).getServiceTime(),data.get(i).getRT(),data.get(i).getAnswerTime()});
+            Model.addRow(new Object[]{data.get(i).getID(),data.get(i).getState(), data.get(i).getFullOperation(), (data.get(i).getIsError()) ? "<ERROR>" : data.get(i).getResult(),data.get(i).getArriveTime(),data.get(i).getEndTime(),data.get(i).getReturnTime(),data.get(i).getWaitTime(),data.get(i).getServiceTime(),(data.get(i).getState() == "Finished") ? 0 : data.get(i).getRT(),data.get(i).getAnswerTime()});
         }
+    }
+    
+    public void setMT(FSThread master){
+        this.MT = master;
     }
 
     /**
@@ -51,6 +58,11 @@ public class BCP extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Five States Simulation Results");
         setResizable(false);
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                formKeyTyped(evt);
+            }
+        });
 
         ResultsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -83,6 +95,16 @@ public class BCP extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyTyped
+        // TODO add your handling code here:
+        switch(evt.getKeyChar()){
+            case 'c','C' -> {
+                this.dispose();
+                this.MT.continueThread();
+            }
+        }
+    }//GEN-LAST:event_formKeyTyped
 
     /**
      * @param args the command line arguments

@@ -103,6 +103,7 @@ public class FSThread extends Thread {
         
         BCP bcp = new BCP();
         bcp.setData(AllProcesses);
+        bcp.setMT(this);
         bcp.setVisible(true);
         
         this.pauseThread();
@@ -248,6 +249,8 @@ public class FSThread extends Thread {
                 TE++;
                 GC++;
                 volatileQuantum--;
+                
+                this.ExecutionProcess.setRT(TL);
                 
                 this.ExecutionProcess.incServiceTime();
                 
