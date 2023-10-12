@@ -287,7 +287,8 @@ public class FSThread extends Thread {
         
         this.GUI.setStatus("Finished");
         
-        FinalTable ft = new FinalTable();
+        BCP ft = new BCP();
+        //FinalTable ft = new FinalTable();
         ft.setData(FinishedProcesses);
         ft.setVisible(true);
         
