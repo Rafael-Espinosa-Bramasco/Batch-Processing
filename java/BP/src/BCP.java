@@ -32,7 +32,7 @@ public class BCP extends javax.swing.JFrame {
         DefaultTableModel Model = (DefaultTableModel) this.ResultsTable.getModel();
         
         for(int i = 0; i < data.size() ; i++){
-            Model.addRow(new Object[]{data.get(i).getID(),data.get(i).getMET(), data.get(i).getFullOperation(), (data.get(i).getIsError()) ? "<ERROR>" : data.get(i).getResult(),data.get(i).getArriveTime(),data.get(i).getEndTime(),data.get(i).getReturnTime(),data.get(i).getAnswerTime(),data.get(i).getWaitTime(),data.get(i).getServiceTime()});
+            Model.addRow(new Object[]{data.get(i).getID(),data.get(i).getState(), data.get(i).getFullOperation(), (data.get(i).getIsError()) ? "<ERROR>" : data.get(i).getResult(),data.get(i).getArriveTime(),data.get(i).getEndTime(),data.get(i).getReturnTime(),data.get(i).getWaitTime(),data.get(i).getServiceTime(),data.get(i).getRT(),data.get(i).getAnswerTime()});
         }
     }
 
@@ -56,7 +56,7 @@ public class BCP extends javax.swing.JFrame {
             new Object [][] {
             },
             new String [] {
-                "Progam ID", "Program State", "Operation", "Result", "ArriveTime", "EndTime", "ReturnTime", "WaitTime", "ServiceTime","Time left in CPU", "AnswerTime"
+                "Progam ID", "State", "Operation", "Result", "ArriveTime", "EndTime", "ReturnTime", "WaitTime", "ServiceTime","TL CPU", "AnswerTime"
             }
         ));
         ResultsTable.setFocusable(false);

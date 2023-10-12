@@ -469,7 +469,9 @@ public class FStates extends javax.swing.JFrame {
                 this.randomizeProcesses();
                 this.masterThread.updateNewProcesses();
             }
-            case 'b','B' -> {}
+            case 'b','B' -> {
+                this.masterThread.showBCPTable();
+            }
         }
     }//GEN-LAST:event_formKeyTyped
 
