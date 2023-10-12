@@ -40,6 +40,8 @@ public class ProcessInput extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         NumberOfProcesses = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        input_quantum = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Put the number of processes");
@@ -54,20 +56,28 @@ public class ProcessInput extends javax.swing.JFrame {
             }
         });
 
+        jLabel2.setText("Quantum:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(124, 124, 124))
             .addGroup(layout.createSequentialGroup()
                 .addGap(17, 17, 17)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(NumberOfProcesses)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(18, 18, 18)
+                        .addComponent(input_quantum))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(NumberOfProcesses, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(130, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(123, 123, 123))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -77,8 +87,12 @@ public class ProcessInput extends javax.swing.JFrame {
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(NumberOfProcesses, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(input_quantum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(51, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -88,15 +102,20 @@ public class ProcessInput extends javax.swing.JFrame {
     private boolean validateNP(){
         try{
             //Validate that the field is not clear
-            if(this.NumberOfProcesses.getText().compareTo("") == 0)
+            if(this.NumberOfProcesses.getText().compareTo("") == 0 || this.input_quantum.getText().compareTo("") == 0)
             {
-                JOptionPane.showMessageDialog(null, "You must fill the field");
+                JOptionPane.showMessageDialog(null, "You must fill the fields");
                 return false;
             }
             //Validate that the number is up 0
             else if(Integer.parseInt(this.NumberOfProcesses.getText())<1)
             {
                 JOptionPane.showMessageDialog(null, "The number of process need to be more than 0");
+                return false;
+            }
+            else if(Integer.parseInt(this.input_quantum.getText())<1)
+            {
+                JOptionPane.showMessageDialog(null, "The quantum need to be more than 0");
                 return false;
             }
         //Validate that the user do not enter a no number character
@@ -167,10 +186,11 @@ public class ProcessInput extends javax.swing.JFrame {
                 int x = this.randomizeProcesses();  //nota para rafa despues la borras: en este punto los procesos estan guardados
                                                     //en un array llamado Processes pero ya no supe como enviar el array a la otra
                                                     //pantalla
+
                 this.fs.setAutomaticationInfo(x);
                 this.fs.setVisible(true);
                 
-                FSThread controllerThread = new FSThread(this.fs,this.Processes);
+                FSThread controllerThread = new FSThread(this.fs,this.Processes, Integer.parseInt(this.input_quantum.getText()));
                 controllerThread.start();
                 
                 this.fs.setMasterThread(controllerThread);
@@ -217,7 +237,9 @@ public class ProcessInput extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField NumberOfProcesses;
+    private javax.swing.JTextField input_quantum;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
 }

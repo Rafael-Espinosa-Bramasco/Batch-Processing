@@ -17,7 +17,7 @@ import libs.FS_Process;
 public class FSThread extends Thread {
     FStates GUI;
     
-    public FSThread(FStates _GUI, ArrayList<FS_Process> IncomingProcesses){
+    public FSThread(FStates _GUI, ArrayList<FS_Process> IncomingProcesses, int Q){
         GUI = _GUI;
         
         this.NewProcesses = IncomingProcesses;
@@ -26,6 +26,9 @@ public class FSThread extends Thread {
         this.FinishedProcesses = new ArrayList<>();
         
         this.isPaused = false;
+        
+        this.isQuantum = Q >= 1;
+        this.Quantum = Q;
     }
     
     // Variables
@@ -40,6 +43,8 @@ public class FSThread extends Thread {
         boolean isPaused;
         boolean isInterrupted;
         boolean isError;
+        boolean isQuantum;
+        int Quantum;
     
     //@Override
         
@@ -51,7 +56,6 @@ public class FSThread extends Thread {
             Finished Processes -> Unlimited List
         */
         
-    
     public void addNewProcess(FS_Process _newProcess){
         this.NewProcesses.add(_newProcess);
     }
@@ -117,6 +121,7 @@ public class FSThread extends Thread {
         int TL = 0;
         int GC = 0;
         int ProcessesInMemory = 0;
+        int volatileQuantum;
         
         while(this.PreparatedProcesses.size() < 3 && !this.NewProcesses.isEmpty()){
             // Fill the first 3 new processes
@@ -162,6 +167,7 @@ public class FSThread extends Thread {
             
             TL = this.ExecutionProcess.getRT();
             TE = this.ExecutionProcess.getMET() - TL;
+            volatileQuantum = this.Quantum;
             
             this.GUI.setTE(String.valueOf(TE));
             this.GUI.setTL(String.valueOf(TL));
@@ -213,12 +219,17 @@ public class FSThread extends Thread {
                 TL--;
                 TE++;
                 GC++;
+                volatileQuantum--;
                 
                 this.ExecutionProcess.incServiceTime();
                 
                 this.GUI.setTE(String.valueOf(TE));
                 this.GUI.setTL(String.valueOf(TL));
                 this.GUI.setGlobalCounter(String.valueOf(GC));
+                
+                if(this.isQuantum && volatileQuantum == 0){
+                    break;
+                }
                 
                 if(isInterrupted){
                     isInterrupted = false;
@@ -277,10 +288,14 @@ public class FSThread extends Thread {
                 this.FinishedProcesses.add(ExecutionProcess);
                 ProcessesInMemory--;
                 this.GUI.updateFini(FinishedProcesses);
+            }else if(volatileQuantum == 0 && this.ExecutionProcess != null  && !this.ExecutionProcess.getIsError()){
+                this.ExecutionProcess.setRT(TL);
+                this.PreparatedProcesses.add(this.ExecutionProcess);
+                this.ExecutionProcess = null;
             }
             
             try {
-                Thread.sleep(250);
+                Thread.sleep(150);
             } catch (InterruptedException ex) {
                 Logger.getLogger(FSThread.class.getName()).log(Level.SEVERE, null, ex);
             }
