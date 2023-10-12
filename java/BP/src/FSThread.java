@@ -51,6 +51,11 @@ public class FSThread extends Thread {
             Finished Processes -> Unlimited List
         */
         
+    
+    public void addNewProcess(FS_Process _newProcess){
+        this.NewProcesses.add(_newProcess);
+    }
+        
     public void pauseThread(){
         if(!this.isPaused){
             this.suspend();
@@ -77,6 +82,10 @@ public class FSThread extends Thread {
         if(!isError){
             isError = true;
         }
+    }
+    
+    public void updateNewProcesses(){
+        this.GUI.updateNews(this.NewProcesses);
     }
     
     private void checkBlocked(){
@@ -163,7 +172,7 @@ public class FSThread extends Thread {
                     isInterrupted = false;
                     
                     this.ExecutionProcess.setRT(++TL);
-                    this.ExecutionProcess.setBlockedTime(10);
+                    this.ExecutionProcess.setBlockedTime(9);
                     
                     this.BlockedProcesses.add(ExecutionProcess);
                     
@@ -215,7 +224,7 @@ public class FSThread extends Thread {
                     isInterrupted = false;
                     
                     this.ExecutionProcess.setRT(TL);
-                    this.ExecutionProcess.setBlockedTime(10);
+                    this.ExecutionProcess.setBlockedTime(9);
                     
                     this.BlockedProcesses.add(ExecutionProcess);
                     
@@ -263,7 +272,7 @@ public class FSThread extends Thread {
                 this.GUI.setTE("-.-");
             }
 
-            if(TL == 0 && !this.ExecutionProcess.getIsError() && this.ExecutionProcess != null){
+            if(TL == 0 && this.ExecutionProcess != null  && !this.ExecutionProcess.getIsError()){
                 this.ExecutionProcess.finish(GC);
                 this.FinishedProcesses.add(ExecutionProcess);
                 ProcessesInMemory--;

@@ -25,7 +25,11 @@ public class FStates extends javax.swing.JFrame {
         preModel = (DefaultTableModel) this.PreparatedState.getModel();
         bloModel = (DefaultTableModel) this.BlockedState.getModel();
         finModel = (DefaultTableModel) this.FinishedState.getModel();
+        
+        this.ActualPID = 0;
     }
+    
+    int ActualPID;
     
     DefaultTableModel newModel;
     DefaultTableModel preModel;
@@ -71,6 +75,43 @@ public class FStates extends javax.swing.JFrame {
         this.updatePrep(_Prep);
         this.updateBloc(_Block);
         this.updateFini(_Finish);
+    }
+    
+    private void randomizeProcesses(){
+        
+        // Programmer name isnt necessary
+        int OP1;
+        int OP2;
+        char OP = ' ';
+        int MET;
+        String PID;
+        
+        FS_Process newProcess;
+        
+        OP1 = (int) (Math.random() * 100);
+
+        switch((int) (Math.random() *12+1)){
+            case 1, 2 -> {OP = '+';}
+            case 3, 4 -> {OP = '-';}
+            case 5, 6 -> {OP = 'x';}
+            case 7, 8 -> {OP = '/';}
+            case 9, 10 -> {OP = '%';}
+            case 11, 12 -> {OP = 'P';}
+        }
+
+        MET = (int) (7 + Math.random() * (18 - 7));
+
+        if(OP == '/' || OP == '%'){
+            OP2 = (int) (Math.random() *100+1);
+        }else{
+            OP2 = (int) (Math.random() *100+0);
+        }
+
+        PID = "P".concat(String.valueOf(this.ActualPID)).concat("ID");
+        this.ActualPID++;
+
+        newProcess = new FS_Process(PID,MET,String.valueOf(OP1),OP,String.valueOf(OP2));
+        this.masterThread.addNewProcess(newProcess);
     }
     
     public void clearTable(char table){
@@ -412,10 +453,10 @@ public class FStates extends javax.swing.JFrame {
     private void formKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyTyped
         // TODO add your handling code here:
         switch(evt.getKeyChar()){
-            case 'i', 'I' -> {
+            case 'e', 'E' -> {
                 this.masterThread.interruptThread();
             }
-            case 'e', 'E' -> {
+            case 'w', 'W' -> {
                 this.masterThread.errorThread();
             }
             case 'p', 'P' -> {
@@ -424,9 +465,18 @@ public class FStates extends javax.swing.JFrame {
             case 'c', 'C' -> {
                 this.masterThread.continueThread();
             }
+            case 'n','N' -> {
+                this.randomizeProcesses();
+                this.masterThread.updateNewProcesses();
+            }
+            case 'b','B' -> {}
         }
     }//GEN-LAST:event_formKeyTyped
 
+    public void setAutomaticationInfo(int _ActualPID){
+        this.ActualPID = _ActualPID;
+    }
+    
     /**
      * @param args the command line arguments
      */

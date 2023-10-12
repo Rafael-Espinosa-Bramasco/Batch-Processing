@@ -109,7 +109,7 @@ public class ProcessInput extends javax.swing.JFrame {
         return true;
     }
     
-    private void randomizeProcesses(){
+    private int randomizeProcesses(){
         
         // Programmer name isnt necessary
         int OP1;
@@ -151,6 +151,8 @@ public class ProcessInput extends javax.swing.JFrame {
             
             numberOfProcesses--;
         }
+        
+        return PIDCount;
     }
     
     //Action Events:
@@ -162,9 +164,10 @@ public class ProcessInput extends javax.swing.JFrame {
                 // Cannot open another instance for this window
                 JOptionPane.showMessageDialog(null, "Five States Mode window is already active!");
             }else {
-                this.randomizeProcesses();//nota para rafa despues la borras: en este punto los procesos estan guardados
-                                          //en un array llamado Processes pero ya no supe como enviar el array a la otra
-                                          //pantalla
+                int x = this.randomizeProcesses();  //nota para rafa despues la borras: en este punto los procesos estan guardados
+                                                    //en un array llamado Processes pero ya no supe como enviar el array a la otra
+                                                    //pantalla
+                this.fs.setAutomaticationInfo(x);
                 this.fs.setVisible(true);
                 
                 FSThread controllerThread = new FSThread(this.fs,this.Processes);
