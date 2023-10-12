@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -24,6 +25,7 @@ public class FSThread extends Thread {
         this.PreparatedProcesses = new ArrayList<>();
         this.BlockedProcesses = new ArrayList<>();
         this.FinishedProcesses = new ArrayList<>();
+        this.AllProcesses = new ArrayList<>();
         
         this.isPaused = false;
         
@@ -37,6 +39,7 @@ public class FSThread extends Thread {
         ArrayList<FS_Process> PreparatedProcesses;
         ArrayList<FS_Process> BlockedProcesses;
         ArrayList<FS_Process> FinishedProcesses;
+        ArrayList<FS_Process> AllProcesses;
     
         // Simple Variables
         FS_Process ExecutionProcess;    // Asigned on program execution
@@ -88,6 +91,24 @@ public class FSThread extends Thread {
         }
     }
     
+    public void showBCPTable() {
+        
+        this.AllProcesses.clear();
+        this.AllProcesses.addAll(NewProcesses);
+        this.AllProcesses.addAll(PreparatedProcesses);
+        this.AllProcesses.add(ExecutionProcess);
+        this.AllProcesses.addAll(BlockedProcesses);
+        this.AllProcesses.addAll(FinishedProcesses);
+        
+        
+        BCP bcp = new BCP();
+        bcp.setData(AllProcesses);
+        bcp.setVisible(true);
+        
+        this.pauseThread();
+        
+    }
+    
     public void updateNewProcesses(){
         this.GUI.updateNews(this.NewProcesses);
     }
@@ -103,6 +124,7 @@ public class FSThread extends Thread {
         for(int i = 0; i < this.BlockedProcesses.size() ; i++){
             if(this.BlockedProcesses.get(i).getBlockedTime() < 0){
                 this.PreparatedProcesses.add(this.BlockedProcesses.get(i));
+                this.BlockedProcesses.get(i).changeState("Prepared");
                 this.BlockedProcesses.remove(i);
                 i--;
             }
@@ -126,6 +148,7 @@ public class FSThread extends Thread {
         while(this.PreparatedProcesses.size() < 3 && !this.NewProcesses.isEmpty()){
             // Fill the first 3 new processes
             this.PreparatedProcesses.add(this.NewProcesses.get(0));
+            this.NewProcesses.get(0).changeState("Prepared");
             this.NewProcesses.remove(0);
             ProcessesInMemory++;
         }
@@ -141,10 +164,12 @@ public class FSThread extends Thread {
                 this.PreparatedProcesses.remove(0);
 
                 this.ExecutionProcess.arrive(GC);
+                this.ExecutionProcess.changeState("Executed");
                 
                 // Take another process if possible
                 if(!this.NewProcesses.isEmpty()){
                     this.PreparatedProcesses.add(this.NewProcesses.get(0));
+                    this.NewProcesses.get(0).changeState("Prepared");
                     this.NewProcesses.remove(0);
                     ProcessesInMemory++;
                     this.GUI.updateNews(NewProcesses);
@@ -156,6 +181,7 @@ public class FSThread extends Thread {
                     this.PreparatedProcesses.remove(0);
 
                     this.ExecutionProcess.arrive(GC);
+                    this.ExecutionProcess.changeState("Executed");
                     this.GUI.updatePrep(PreparatedProcesses);
                 }
             }
@@ -179,6 +205,7 @@ public class FSThread extends Thread {
                     
                     this.ExecutionProcess.setRT(++TL);
                     this.ExecutionProcess.setBlockedTime(9);
+                    this.ExecutionProcess.changeState("Blocked");
                     
                     this.BlockedProcesses.add(ExecutionProcess);
                     
@@ -193,6 +220,7 @@ public class FSThread extends Thread {
                     
                     this.ExecutionProcess.setError();
                     this.ExecutionProcess.finish(GC);
+                    this.ExecutionProcess.changeState("Finished");
                     
                     this.FinishedProcesses.add(ExecutionProcess);
                     
@@ -236,6 +264,7 @@ public class FSThread extends Thread {
                     
                     this.ExecutionProcess.setRT(TL);
                     this.ExecutionProcess.setBlockedTime(9);
+                    this.ExecutionProcess.changeState("Blocked");
                     
                     this.BlockedProcesses.add(ExecutionProcess);
                     
@@ -250,6 +279,7 @@ public class FSThread extends Thread {
                     
                     this.ExecutionProcess.setError();
                     this.ExecutionProcess.finish(GC);
+                    this.ExecutionProcess.changeState("Finished");
                     
                     this.FinishedProcesses.add(ExecutionProcess);
                     
@@ -285,6 +315,7 @@ public class FSThread extends Thread {
 
             if(TL == 0 && this.ExecutionProcess != null  && !this.ExecutionProcess.getIsError()){
                 this.ExecutionProcess.finish(GC);
+                this.ExecutionProcess.changeState("Finished");
                 this.FinishedProcesses.add(ExecutionProcess);
                 ProcessesInMemory--;
                 this.GUI.updateFini(FinishedProcesses);

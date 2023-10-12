@@ -23,6 +23,8 @@ public class FS_Process {
     int ServiceTime;        // XD
     int BlockedTime;        // XD 3
     
+    String State;
+    
     boolean isArrived;
     boolean isEnded;
     boolean isError;
@@ -56,6 +58,8 @@ public class FS_Process {
         isArrived = false;
         isEnded = false;
         isError = false;
+        
+        State = "New";
     }
     
     // Methods
@@ -226,5 +230,13 @@ public class FS_Process {
     
     public void decBT(){
         BlockedTime--;
+    }
+    
+    public void changeState(String state){
+        this.State = state;
+    }
+    
+    public String getState(){
+        return State;
     }
 }
