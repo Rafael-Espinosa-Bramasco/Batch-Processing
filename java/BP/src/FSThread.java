@@ -324,6 +324,7 @@ public class FSThread extends Thread {
                 this.GUI.updateFini(FinishedProcesses);
             }else if(volatileQuantum == 0 && this.ExecutionProcess != null  && !this.ExecutionProcess.getIsError()){
                 this.ExecutionProcess.setRT(TL);
+                this.ExecutionProcess.changeState("Prepared");
                 this.PreparatedProcesses.add(this.ExecutionProcess);
                 this.ExecutionProcess = null;
             }
