@@ -453,10 +453,10 @@ public class FStates extends javax.swing.JFrame {
     private void formKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyTyped
         // TODO add your handling code here:
         switch(evt.getKeyChar()){
-            case 'e', 'E' -> {
+            case 'i', 'I' -> {
                 this.masterThread.interruptThread();
             }
-            case 'w', 'W' -> {
+            case 'e', 'E' -> {
                 this.masterThread.errorThread();
             }
             case 'p', 'P' -> {
@@ -469,8 +469,11 @@ public class FStates extends javax.swing.JFrame {
                 this.randomizeProcesses();
                 this.masterThread.updateNewProcesses();
             }
-            case 'b','B' -> {
+            case 't','T' -> {
                 this.masterThread.showBCPTable();
+            }
+            case 'm','M' -> {
+                this.masterThread.showPageTable();
             }
         }
     }//GEN-LAST:event_formKeyTyped
