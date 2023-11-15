@@ -110,6 +110,10 @@ public class FSThread extends Thread {
         
     }
     
+    public void showPageTable() {
+        
+    }
+    
     public void updateNewProcesses(){
         this.GUI.updateNews(this.NewProcesses);
     }

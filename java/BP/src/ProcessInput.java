@@ -129,7 +129,7 @@ public class ProcessInput extends javax.swing.JFrame {
         int OP1;
         int OP2;
         char OP = ' ';
-        int MET;
+        int MET, size;
         String PID;
         int PIDCount = 0;
         
@@ -151,6 +151,8 @@ public class ProcessInput extends javax.swing.JFrame {
             
             MET = (int) (7 + Math.random() * (18 - 7));
             
+            size = (int) (Math.random() *5+1);
+            
             if(OP == '/' || OP == '%'){
                 OP2 = (int) (Math.random() *100+1);
             }else{
@@ -160,7 +162,7 @@ public class ProcessInput extends javax.swing.JFrame {
             PID = "P".concat(String.valueOf(PIDCount)).concat("ID");
             PIDCount++;
             
-            newProcess = new FS_Process(PID,MET,String.valueOf(OP1),OP,String.valueOf(OP2));
+            newProcess = new FS_Process(PID,MET,String.valueOf(OP1),OP,String.valueOf(OP2),size);
             this.Processes.add(newProcess);
             
             numberOfProcesses--;

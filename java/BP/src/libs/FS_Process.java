@@ -11,7 +11,7 @@ package libs;
 public class FS_Process {
     
     private String ID, OP1, OP2;
-    private int MET, RT, ET;
+    private int MET, RT, ET, Size;
     private char OP;
     double Result;
     
@@ -37,7 +37,7 @@ public class FS_Process {
         this.AnswerTime++;
     }
     
-    public FS_Process(String _ID, int _MET, String _OP1, char _OP, String _OP2){
+    public FS_Process(String _ID, int _MET, String _OP1, char _OP, String _OP2, int size){
         // Init. Vars
         ID = _ID;
         MET = _MET;
@@ -45,6 +45,7 @@ public class FS_Process {
         OP1 = _OP1;
         OP = _OP;
         OP2 = _OP2;
+        Size = size;
         ET = 0;
         
         // Init. Time data vars
@@ -168,6 +169,10 @@ public class FS_Process {
     
     public String getOP2(){
         return OP2;
+    }
+    
+    public int getSize(){
+        return Size;
     }
     
     public String getFullOperation(){

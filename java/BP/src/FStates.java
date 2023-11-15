@@ -83,7 +83,7 @@ public class FStates extends javax.swing.JFrame {
         int OP1;
         int OP2;
         char OP = ' ';
-        int MET;
+        int MET, size;
         String PID;
         
         FS_Process newProcess;
@@ -100,6 +100,7 @@ public class FStates extends javax.swing.JFrame {
         }
 
         MET = (int) (7 + Math.random() * (18 - 7));
+        size = (int) (7 + Math.random() *5+1);
 
         if(OP == '/' || OP == '%'){
             OP2 = (int) (Math.random() *100+1);
@@ -110,7 +111,7 @@ public class FStates extends javax.swing.JFrame {
         PID = "P".concat(String.valueOf(this.ActualPID)).concat("ID");
         this.ActualPID++;
 
-        newProcess = new FS_Process(PID,MET,String.valueOf(OP1),OP,String.valueOf(OP2));
+        newProcess = new FS_Process(PID,MET,String.valueOf(OP1),OP,String.valueOf(OP2),size);
         this.masterThread.addNewProcess(newProcess);
     }
     
