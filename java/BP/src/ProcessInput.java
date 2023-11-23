@@ -151,7 +151,7 @@ public class ProcessInput extends javax.swing.JFrame {
             
             MET = (int) (7 + Math.random() * (18 - 7));
             
-            size = (int) (Math.random() *5+1);
+            size = (int) (Math.random() *170+1);
             
             if(OP == '/' || OP == '%'){
                 OP2 = (int) (Math.random() *100+1);

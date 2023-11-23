@@ -27,6 +27,8 @@ public class FSThread extends Thread {
         this.FinishedProcesses = new ArrayList<>();
         this.AllProcesses = new ArrayList<>();
         
+        this.Marcos = new ArrayList<>();
+        
         this.isPaused = false;
         
         this.isQuantum = Q >= 1;
@@ -40,6 +42,8 @@ public class FSThread extends Thread {
         ArrayList<FS_Process> BlockedProcesses;
         ArrayList<FS_Process> FinishedProcesses;
         ArrayList<FS_Process> AllProcesses;
+        
+        ArrayList<String> Marcos;
     
         // Simple Variables
         FS_Process ExecutionProcess;    // Asigned on program execution
@@ -111,6 +115,11 @@ public class FSThread extends Thread {
     }
     
     public void showPageTable() {
+        MarcosTable marcos = new MarcosTable();
+        marcos.setData(this.Marcos);
+        marcos.setVisible(true);
+        
+        this.pauseThread();
         
     }
     
@@ -148,14 +157,30 @@ public class FSThread extends Thread {
         int TL = 0;
         int GC = 0;
         int ProcessesInMemory = 0;
+        this.Marcos.add("SO");
+        this.Marcos.add("SO");
         int volatileQuantum;
         
-        while(this.PreparatedProcesses.size() < 3 && !this.NewProcesses.isEmpty()){
+        while(ProcessesInMemory<34 && !this.NewProcesses.isEmpty()){
             // Fill the first 3 new processes
-            this.PreparatedProcesses.add(this.NewProcesses.get(0));
-            this.NewProcesses.get(0).changeState("Prepared");
-            this.NewProcesses.remove(0);
-            ProcessesInMemory++;
+            boolean acomodado=false;
+            for(int i=0;i<NewProcesses.size();i++)
+            {
+                FS_Process actual = this.NewProcesses.get(i);
+                if((ProcessesInMemory + actual.getMarcos())<34)
+                {
+                    this.PreparatedProcesses.add(actual);
+                    actual.changeState("Prepared");
+                    this.NewProcesses.remove(i);
+                    ProcessesInMemory+=actual.getMarcos();
+                    for(int j=0;j<actual.getMarcos();j++)
+                        this.Marcos.add(actual.getID());
+                    acomodado = true;
+                    break;
+                }
+            }
+            if(!acomodado)
+                break;
         }
         
         this.GUI.updateNews(NewProcesses);
@@ -163,33 +188,34 @@ public class FSThread extends Thread {
         
         while(!this.PreparatedProcesses.isEmpty() || !this.NewProcesses.isEmpty() || !this.BlockedProcesses.isEmpty()){
             // assign the actual process
-            if(ProcessesInMemory < 3){
-                
+            if(ProcessesInMemory < 34){
+                //Take another process if possible
+                for(int i=0;i<NewProcesses.size();i++)
+                {
+                    FS_Process actual = this.NewProcesses.get(i);
+                    if((ProcessesInMemory + actual.getMarcos())<34)
+                    {
+                        this.PreparatedProcesses.add(actual);
+                        actual.changeState("Prepared");
+                        this.NewProcesses.remove(i);
+                        ProcessesInMemory+=actual.getMarcos();
+                        for(int j=0;j<actual.getMarcos();j++)
+                            this.Marcos.add(actual.getID());
+                        this.GUI.updateNews(NewProcesses);
+                        break;
+                    }
+                }
+            }
+            this.GUI.updatePrep(PreparatedProcesses);
+            if(this.ExecutionProcess == null && !this.PreparatedProcesses.isEmpty())
+            {
                 this.ExecutionProcess = this.PreparatedProcesses.get(0);
                 this.PreparatedProcesses.remove(0);
 
                 this.ExecutionProcess.arrive(GC);
                 this.ExecutionProcess.changeState("Executed");
-                
-                // Take another process if possible
-                if(!this.NewProcesses.isEmpty()){
-                    this.PreparatedProcesses.add(this.NewProcesses.get(0));
-                    this.NewProcesses.get(0).changeState("Prepared");
-                    this.NewProcesses.remove(0);
-                    ProcessesInMemory++;
-                    this.GUI.updateNews(NewProcesses);
-                }
-                this.GUI.updatePrep(PreparatedProcesses);
-            }else{
-                if(this.ExecutionProcess == null){
-                    this.ExecutionProcess = this.PreparatedProcesses.get(0);
-                    this.PreparatedProcesses.remove(0);
-
-                    this.ExecutionProcess.arrive(GC);
-                    this.ExecutionProcess.changeState("Executed");
-                    this.GUI.updatePrep(PreparatedProcesses);
-                }
             }
+            
             
             // Fill data of execution process
             this.GUI.setPID(this.ExecutionProcess.getID());
@@ -229,7 +255,9 @@ public class FSThread extends Thread {
                     
                     this.FinishedProcesses.add(ExecutionProcess);
                     
-                    ProcessesInMemory--;
+                    ProcessesInMemory-=this.ExecutionProcess.getMarcos();
+                    for(int j=0;j<this.ExecutionProcess.getMarcos();j++)
+                        this.Marcos.remove(this.ExecutionProcess.getID());
                     
                     this.GUI.updateFini(FinishedProcesses);
                     
@@ -290,7 +318,9 @@ public class FSThread extends Thread {
                     
                     this.FinishedProcesses.add(ExecutionProcess);
                     
-                    ProcessesInMemory--;
+                    ProcessesInMemory-=ExecutionProcess.getMarcos();
+                    for(int j=0;j<this.ExecutionProcess.getMarcos();j++)
+                        this.Marcos.remove(this.ExecutionProcess.getID());
                     
                     this.GUI.updateFini(FinishedProcesses);
                     
@@ -301,31 +331,34 @@ public class FSThread extends Thread {
                 this.ExecutionProcess.decRT();
             }
             
-            while(!this.BlockedProcesses.isEmpty() && this.PreparatedProcesses.isEmpty() && ProcessesInMemory == 3 && this.ExecutionProcess == null){
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(FSThread.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                
-                this.checkBlocked();
-
-                this.GUI.updateBloc(BlockedProcesses);
-                
-                this.GUI.setGlobalCounter(String.valueOf(++GC));
-                
-                this.GUI.setPID("-.-");
-                this.GUI.setOP("-.-");
-                this.GUI.setMET("-.-");
-                this.GUI.setTL("-.-");
-                this.GUI.setTE("-.-");
-            }
+//            while(!this.BlockedProcesses.isEmpty() && this.PreparatedProcesses.isEmpty() && ProcessesInMemory == 3 && this.ExecutionProcess == null){
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException ex) {
+//                    Logger.getLogger(FSThread.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//                
+//                this.checkBlocked();
+//
+//                this.GUI.updateBloc(BlockedProcesses);
+//                
+//                this.GUI.setGlobalCounter(String.valueOf(++GC));
+//                
+//                this.GUI.setPID("-.-");
+//                this.GUI.setOP("-.-");
+//                this.GUI.setMET("-.-");
+//                this.GUI.setTL("-.-");
+//                this.GUI.setTE("-.-");
+//            }
 
             if(TL == 0 && this.ExecutionProcess != null  && !this.ExecutionProcess.getIsError()){
                 this.ExecutionProcess.finish(GC);
                 this.ExecutionProcess.changeState("Finished");
                 this.FinishedProcesses.add(ExecutionProcess);
-                ProcessesInMemory--;
+                ProcessesInMemory-=this.ExecutionProcess.getMarcos();
+                for(int j=0;j<this.ExecutionProcess.getMarcos();j++)
+                        this.Marcos.remove(this.ExecutionProcess.getID());
+                this.ExecutionProcess = null;
                 this.GUI.updateFini(FinishedProcesses);
             }else if(volatileQuantum == 0 && this.ExecutionProcess != null  && !this.ExecutionProcess.getIsError()){
                 this.ExecutionProcess.setRT(TL);

@@ -35,7 +35,7 @@ public class BCP extends javax.swing.JFrame {
         DefaultTableModel Model = (DefaultTableModel) this.ResultsTable.getModel();
         
         for(int i = 0; i < data.size() ; i++){
-            Model.addRow(new Object[]{data.get(i).getID(),data.get(i).getState(), data.get(i).getFullOperation(), (data.get(i).getIsError()) ? "<ERROR>" : data.get(i).getResult(),data.get(i).getArriveTime(),data.get(i).getEndTime(),data.get(i).getReturnTime(),data.get(i).getWaitTime(),data.get(i).getServiceTime(),(data.get(i).getState() == "Finished") ? 0 : data.get(i).getRT(),data.get(i).getAnswerTime()});
+            Model.addRow(new Object[]{data.get(i).getID(),data.get(i).getState(),data.get(i).getSize(), data.get(i).getFullOperation(), (data.get(i).getIsError()) ? "<ERROR>" : data.get(i).getResult(),data.get(i).getArriveTime(),data.get(i).getEndTime(),data.get(i).getReturnTime(),data.get(i).getWaitTime(),data.get(i).getServiceTime(),(data.get(i).getState() == "Finished") ? 0 : data.get(i).getRT(),data.get(i).getAnswerTime()});
         }
     }
     
@@ -68,7 +68,7 @@ public class BCP extends javax.swing.JFrame {
             new Object [][] {
             },
             new String [] {
-                "Progam ID", "State", "Operation", "Result", "ArriveTime", "EndTime", "ReturnTime", "WaitTime", "ServiceTime","TL CPU", "AnswerTime"
+                "Progam ID", "State", "Size", "Operation", "Result", "ArriveTime", "EndTime", "ReturnTime", "WaitTime", "ServiceTime","TL CPU", "AnswerTime"
             }
         ));
         ResultsTable.setFocusable(false);

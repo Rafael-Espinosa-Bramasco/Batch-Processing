@@ -11,7 +11,7 @@ package libs;
 public class FS_Process {
     
     private String ID, OP1, OP2;
-    private int MET, RT, ET, Size;
+    private int MET, RT, ET, Size,Marcos_needed;
     private char OP;
     double Result;
     
@@ -61,6 +61,10 @@ public class FS_Process {
         isError = false;
         
         State = "New";
+        
+        Marcos_needed = Size/5;
+        if(Size%5!=0)
+            Marcos_needed++;
     }
     
     // Methods
@@ -173,6 +177,10 @@ public class FS_Process {
     
     public int getSize(){
         return Size;
+    }
+    
+    public int getMarcos(){
+        return Marcos_needed;
     }
     
     public String getFullOperation(){
