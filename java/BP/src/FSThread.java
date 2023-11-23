@@ -13,7 +13,7 @@ import libs.FS_Process;
 
 /**
  *
- * @author rafael
+ * @author rafael & Andrea
  */
 public class FSThread extends Thread {
     FStates GUI;
@@ -206,7 +206,6 @@ public class FSThread extends Thread {
                     }
                 }
             }
-            this.GUI.updatePrep(PreparatedProcesses);
             if(this.ExecutionProcess == null && !this.PreparatedProcesses.isEmpty())
             {
                 this.ExecutionProcess = this.PreparatedProcesses.get(0);
@@ -215,6 +214,7 @@ public class FSThread extends Thread {
                 this.ExecutionProcess.arrive(GC);
                 this.ExecutionProcess.changeState("Executed");
             }
+            this.GUI.updatePrep(PreparatedProcesses);
             
             
             // Fill data of execution process
