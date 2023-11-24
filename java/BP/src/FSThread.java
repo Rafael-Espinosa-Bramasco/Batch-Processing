@@ -161,13 +161,13 @@ public class FSThread extends Thread {
         this.Marcos.add("SO");
         int volatileQuantum;
         
-        while(ProcessesInMemory<34 && !this.NewProcesses.isEmpty()){
+        while(ProcessesInMemory<=34 && !this.NewProcesses.isEmpty()){
             // Fill the first 3 new processes
             boolean acomodado=false;
             for(int i=0;i<NewProcesses.size();i++)
             {
                 FS_Process actual = this.NewProcesses.get(i);
-                if((ProcessesInMemory + actual.getMarcos())<34)
+                if((ProcessesInMemory + actual.getMarcos())<=34)
                 {
                     this.PreparatedProcesses.add(actual);
                     actual.changeState("Prepared");
@@ -188,12 +188,12 @@ public class FSThread extends Thread {
         
         while(!this.PreparatedProcesses.isEmpty() || !this.NewProcesses.isEmpty() || !this.BlockedProcesses.isEmpty()){
             // assign the actual process
-            if(ProcessesInMemory < 34){
+            if(ProcessesInMemory <= 34){
                 //Take another process if possible
                 for(int i=0;i<NewProcesses.size();i++)
                 {
                     FS_Process actual = this.NewProcesses.get(i);
-                    if((ProcessesInMemory + actual.getMarcos())<34)
+                    if((ProcessesInMemory + actual.getMarcos())<=34)
                     {
                         this.PreparatedProcesses.add(actual);
                         actual.changeState("Prepared");
